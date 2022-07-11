@@ -14,6 +14,7 @@ ts_linkThunderstorm=
 ts_lint=
 ts_runTests=
 ts_publish=
+ts_copySecrets=
 ts_fileToExecute="index.js"
 ts_feApp=
 
@@ -64,6 +65,7 @@ params=(
   promoteThunderstormVersion
   version
   promoteAppVersion
+  ts_copySecrets
   ts_feApp
 )
 
@@ -121,6 +123,12 @@ extractParams() {
 
       ts_clean=true
       ts_link=true
+      ;;
+
+    "--copy-secrets" | "-cs")
+      #DOC: Will copy secrets to local .env file
+
+      ts_copySecrets=true
       ;;
 
       #        ==== BUILD ====
@@ -305,6 +313,7 @@ extractParams() {
     "--deploy" | "-d")
       ts_deploy+=(${backendApps[@]})
       ts_deploy+=(${frontendApps[@]})
+      ts_copySecrets=true
       ts_link=true
       ;;
 
@@ -317,7 +326,7 @@ extractParams() {
 
     "--deploy-backend" | "-db")
       #DOC: Will add the app-backend to the deploy list
-
+      ts_copySecrets=true
       ts_deploy+=(app-backend)
       ts_link=true
       ;;
