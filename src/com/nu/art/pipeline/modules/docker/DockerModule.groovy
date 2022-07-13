@@ -20,11 +20,11 @@ class DockerModule
 //	-v /home/jenkins/.config:/home/jenkins/.config
 //	-v /home/jenkins/.ssh/id_rsa:/home/jenkins/.ssh/id_rsa
 //	-v /home/jenkins/.ssh/known_hosts:/home/jenkins/.ssh/known_hosts
-//	eu.gcr.io/ir-infrastructure-246111/jenkins-ci-python-env:1.0.18 tail -f /dev/null
+//	eu.gcr.io/ir-infrastructure-246111/jenkins-ci-python-env:latest tail -f /dev/null
 //
 //docker run --rm -d --net=host --name 783e39a7-003b-488d-b616-24720851b5a4
 //	-v ****:**** -v ****:****
 //	-e WORKSPACE=/data/jenkins/workspace/v2_upload_elliq_firebase_data-DEV
 //	-e BUILD_NUMBER=46
 //	-v /data/jenkins/workspace/v2_upload_elliq_firebase_data-DEV:/data/jenkins/workspace/v2_upload_elliq_firebase_data-DEV
-//	eu.gcr.io/ir-infrastructure-246111/jenkins-ci-python-env:1.0.18 tail -f /dev/null
+//	eu.gcr.io/ir-infrastructure-246111/jenkins-ci-python-env:latest tail -f /dev/null
