@@ -25,7 +25,7 @@ BackendPackage() {
 
         read -a strarr <<< "$i"
         local secretKey="${strarr[0]}"
-        local secret=$(gcloud secrets versions access 1 --secret="${secretKey}" --project=ir-secrets)
+        local secret=$(/usr/bin/gcloud secrets versions access 1 --secret="${secretKey}" --project=ir-secrets)
         local replacementString="${strarr[1]}=${secret}"
         local isThereAValue=false
         if [[ ! -e "${CONST_DOT_ENV_FILE}" ]]; then
