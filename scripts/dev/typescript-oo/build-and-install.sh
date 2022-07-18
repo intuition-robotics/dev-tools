@@ -27,7 +27,6 @@ setTranspilerOutput ".trash/bai"
 addTranspilerClassPath "${CONST_RunningFolder}/classes"
 
 buildWorkspace() {
-
   installAndUseNvmIfNeeded
   storeFirebasePath
 
@@ -115,6 +114,7 @@ buildWorkspace() {
   workspace.test
 
   workspace.copySecrets
+  workspace.copyVoIPSecret
   workspace.publish
   workspace.launch
   workspace.deploy

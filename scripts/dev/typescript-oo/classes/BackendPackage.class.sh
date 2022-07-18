@@ -49,6 +49,23 @@ BackendPackage() {
       done
   }
 
+  _copyVoIPSecret() {
+      logInfo "Copying voip auth secret: ${folderName}"
+      local voipSecret=$(gcloud secrets versions access 3 --secret="voip-auth-secret" --project=ir-secrets)
+      rm -rf ./certs/voip-auth-secret.p8
+      rm -rf ./certs/temp.p8
+
+      mkdir -p ./certs
+
+      echo ${voipSecret} >> ./certs/temp.p8
+
+      echo "-----BEGIN PRIVATE KEY-----" >> ./certs/voip-auth-secret.p8
+      (xargs -n 1 < ./certs/temp.p8) >> ./certs/voip-auth-secret.p8
+      echo "-----END PRIVATE KEY-----" >> ./certs/voip-auth-secret.p8
+
+      rm -rf ./certs/temp.p8
+  }
+
   _setEnvironment() {
     #    TODO: iterate on all source folders
     logDebug "Setting ${folderName} env: ${envType}"

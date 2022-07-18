@@ -7,25 +7,6 @@ FrontendPackage() {
     [[ ! "$(array_contains "${folderName}" "${ts_deploy[@]}")" ]] && return
 
     logInfo "Deploying: ${folderName}"
-
-    getJsonValueForKeyAndIndex() {
-      local fileName=${1}
-      local key=${2}
-      local i=${3}
-      if [[ ! "${i}" ]]; then
-          i=1
-      fi
-
-      local value=$(cat "${fileName}" | grep "\"${key}\":" | head "-${i}" | tail -1 | sed -E "s/.*\"${key}\".*\"(.*)\".*/\1/")
-      echo "${value}"
-    }
-
-    local target1="$(getJsonValueForKeyAndIndex "../firebase.json" "target" 1)"
-    ${CONST_Firebase} target:apply hosting "${target1}" "${target1}"
-
-    local target2="$(getJsonValueForKeyAndIndex "../firebase.json" "target" 2)"
-    ${CONST_Firebase} target:apply hosting "${target2}" "${target2}"
-
     ${CONST_Firebase} deploy --only hosting
     throwWarning "Error while deploying hosting"
     logInfo "Deployed: ${folderName}"
@@ -67,8 +48,8 @@ FrontendPackage() {
   _launch() {
     [[ ! "$(array_contains "${folderName}" "${ts_launch[@]}")" ]] && return
 
-    logInfo "Launching: ${folderName}, app is: ${ts_feApp}"
-    npm run launch -- --name="${ts_feApp}"
+    logInfo "Launching: ${folderName}"
+    npm run launch
   }
 
   _install() {

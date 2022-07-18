@@ -154,6 +154,10 @@ NodePackage() {
     return 0
   }
 
+  _copyVoIPSecret() {
+    return 0
+  }
+
   _compile() {
     _cd src
     local folders=($(listFolders))

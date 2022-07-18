@@ -244,6 +244,14 @@ Workspace() {
     this.apps.forEach copySecrets
   }
 
+  _copyVoIPSecret() {
+    [[ ! "${ts_copyVoIPSecret}" ]] && return
+    logInfo
+    bannerInfo "Copy VoIP Secret"
+
+    this.apps.forEach copyVoIPSecret
+  }
+
   _deploy() {
     ((${#ts_deploy[@]} == 0)) && return
 

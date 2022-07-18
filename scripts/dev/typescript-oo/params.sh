@@ -15,8 +15,8 @@ ts_lint=
 ts_runTests=
 ts_publish=
 ts_copySecrets=
+ts_copyVoIPSecret=
 ts_fileToExecute="index.js"
-ts_feApp=
 
 checkCircularImports=
 
@@ -66,7 +66,7 @@ params=(
   version
   promoteAppVersion
   ts_copySecrets
-  ts_feApp
+  ts_copyVoIPSecret
 )
 
 extractParams() {
@@ -112,12 +112,6 @@ extractParams() {
       ts_link=true
       ;;
 
-    "--app="*)
-      #DOC: If you have more then one hosting you will be able to select which one to run with --app=main
-      local app=$(regexParam "--app" "${paramValue}")
-      [[ "${app}" ]] && ts_feApp=("${app}")
-    ;;
-
     "--clean" | "-c")
       #DOC: Will delete the output(dist) & test output(dist-test) folders in all project packages
 
@@ -129,6 +123,11 @@ extractParams() {
       #DOC: Will copy secrets to local .env file
 
       ts_copySecrets=true
+      ;;
+
+    "--copy-voip-secrets" | "-cvs")
+      #DOC: Will copy voip auth secrets to local file.p8
+      ts_copyVoIPSecret=true
       ;;
 
       #        ==== BUILD ====
@@ -314,6 +313,7 @@ extractParams() {
       ts_deploy+=(${backendApps[@]})
       ts_deploy+=(${frontendApps[@]})
       ts_copySecrets=true
+      ts_copyVoIPSecret=true
       ts_link=true
       ;;
 
@@ -327,6 +327,7 @@ extractParams() {
     "--deploy-backend" | "-db")
       #DOC: Will add the app-backend to the deploy list
       ts_copySecrets=true
+      ts_copyVoIPSecret=true
       ts_deploy+=(app-backend)
       ts_link=true
       ;;
