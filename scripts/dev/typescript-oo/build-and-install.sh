@@ -27,6 +27,7 @@ setTranspilerOutput ".trash/bai"
 addTranspilerClassPath "${CONST_RunningFolder}/classes"
 
 buildWorkspace() {
+
   installAndUseNvmIfNeeded
   storeFirebasePath
 

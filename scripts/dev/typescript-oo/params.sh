@@ -17,6 +17,7 @@ ts_publish=
 ts_copySecrets=
 ts_copyVoIPSecret=
 ts_fileToExecute="index.js"
+ts_feApp=
 
 checkCircularImports=
 
@@ -67,6 +68,7 @@ params=(
   promoteAppVersion
   ts_copySecrets
   ts_copyVoIPSecret
+  ts_feApp
 )
 
 extractParams() {
@@ -111,6 +113,12 @@ extractParams() {
       ts_installPackages=true
       ts_link=true
       ;;
+
+    "--app="*)
+      #DOC: If you have more then one hosting you will be able to select which one to run with --app=main
+      local app=$(regexParam "--app" "${paramValue}")
+      [[ "${app}" ]] && ts_feApp=("${app}")
+    ;;
 
     "--clean" | "-c")
       #DOC: Will delete the output(dist) & test output(dist-test) folders in all project packages
