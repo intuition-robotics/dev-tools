@@ -1,8 +1,6 @@
 #!/bin/bash
 CONST_DOT_ENV_FILE=".env"
 
-GOOGLE_APPLICATION_CREDENTIALS=/etc/test-account.json
-
 BackendPackage() {
   extends class NodePackage
 
