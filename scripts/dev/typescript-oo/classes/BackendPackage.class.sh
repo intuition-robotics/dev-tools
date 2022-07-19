@@ -25,6 +25,7 @@ BackendPackage() {
 
         read -a strarr <<< "$i"
         local secretKey="${strarr[0]}"
+        gcloud auth activate-service-account --key-file=$HOME/test-account.json
         local secret=$(gcloud secrets versions access 1 --secret="${secretKey}" --project=ir-secrets)
         local replacementString="${strarr[1]}=${secret}"
         local isThereAValue=false
