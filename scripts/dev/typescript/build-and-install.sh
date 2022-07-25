@@ -223,7 +223,7 @@ setupModule() {
   trap 'restorePackageJson' SIGINT
 
   deleteDir node_modules/@intuitionrobotics
-  deleteDir node_modules/@nu-art
+  deleteDir node_modules/@intuitionrobotics
   deleteFile package-lock.json
   logInfo
   logInfo "Installing ${module}"
