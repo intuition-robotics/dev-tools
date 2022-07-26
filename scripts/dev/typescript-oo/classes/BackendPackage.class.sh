@@ -17,7 +17,6 @@ BackendPackage() {
     if [[ ! -e "./src/main/secrets" ]]; then
       return 0
     fi
-    gcloud auth list
 
     logInfo "Copying Secrets: ${folderName}"
     for i in `cat ./src/main/secrets`; do
