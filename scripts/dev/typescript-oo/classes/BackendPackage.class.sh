@@ -29,22 +29,22 @@ BackendPackage() {
         local replacementString="${strarr[1]}=${secret}"
         local isThereAValue=false
         if [[ ! -e "${CONST_DOT_ENV_FILE}" ]]; then
+          isThereAValue=false
+        else
+          local condition=$(cat ${CONST_DOT_ENV_FILE} | grep -E "${strarr[1]}")
+          if [[ "${condition}" ]]; then
+            isThereAValue=true
+          else
             isThereAValue=false
-          else
-            local condition=$(cat ${CONST_DOT_ENV_FILE} | grep -E "${strarr[1]}")
-            if [[ "${condition}" ]]; then
-                isThereAValue=true
-            else
-                isThereAValue=false
-            fi
           fi
-          if [[ "${isThereAValue}" = true ]]; then
-            file_replace "^"${strarr[1]}"(.*)$" "${replacementString}" ${CONST_DOT_ENV_FILE} "" "%"
-          else
-            echo "${replacementString}" >> ${CONST_DOT_ENV_FILE}
-          fi
+        fi
+        if [[ "${isThereAValue}" = true ]]; then
+          file_replace "^"${strarr[1]}"(.*)$" "${replacementString}" ${CONST_DOT_ENV_FILE} "" "%"
+        else
+          echo "${replacementString}" >> ${CONST_DOT_ENV_FILE}
+        fi
 
-
+        logInfo "Copied Secret: ${strarr[0]} from ir-secrets into ${strarr[1]} in .env"
 
       done
   }
