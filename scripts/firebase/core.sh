@@ -1,6 +1,7 @@
 #!/bin/bash
 storeFirebasePath() {
   CONST_Firebase=$(resolveCommand firebase)
+  echo $CONST_Firebase
 }
 
 verifyFirebaseProjectIsAccessible() {
