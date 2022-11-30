@@ -52,7 +52,7 @@ BackendPackage() {
   _setEnvironment() {
     #    TODO: iterate on all source folders
     logDebug "Setting ${folderName} env: ${envType}"
-#    copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
+    copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
 
     if [ ! -d ./src/main/configs ]; then
       mkdir ./src/main/configs
