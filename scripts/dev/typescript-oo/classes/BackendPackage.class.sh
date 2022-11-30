@@ -52,7 +52,32 @@ BackendPackage() {
   _setEnvironment() {
     #    TODO: iterate on all source folders
     logDebug "Setting ${folderName} env: ${envType}"
-    copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
+#    copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
+
+    if [ ! -d ./src/main/configs ]; then
+      mkdir ./src/main/configs
+    fi
+
+    if [ -f ./src/main/configs/default.json ]; then
+      rm ./src/main/configs/default.json
+    fi
+    ${CONST_Firebase}  database:get /_config/default >> ./src/main/configs/default.json
+
+
+    res=$(firebase database:get /_config/${envType})
+    if [ -z $res ]; then
+      res=$(firebase database:get /_config/${fallbackEnv})
+    fi
+
+    if [ -z $res ]; then
+      res="{}"
+    fi
+
+    if [ -f ./src/main/configs/env.json ]; then
+      rm ./src/main/configs/env.json
+    fi
+    echo $res >> ./src/main/configs/env.json
+
     copyConfigFile "./.config/secrets-ENV_TYPE" "./src/main/secrets" true "${envType}" "${fallbackEnv}"
   }
 
