@@ -63,13 +63,12 @@ BackendPackage() {
     fi
     ${CONST_Firebase}  database:get /_config/default >> ./src/main/configs/default.json
 
-
-    res=$(firebase database:get /_config/${envType})
-    if [ -z $res ]; then
-      res=$(firebase database:get /_config/${fallbackEnv})
+    res=$(${CONST_Firebase} database:get /_config/${envType})
+    if [[ ${res} =~ null ]] && [ ! -z $fallbackEnv ]; then
+      res=$(${CONST_Firebase} database:get /_config/${fallbackEnv})
     fi
 
-    if [ -z $res ]; then
+    if [[ ${res} =~ null ]]; then
       res="{}"
     fi
 
