@@ -54,18 +54,23 @@ BackendPackage() {
     logDebug "Setting ${folderName} env: ${envType}"
     copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
 
+    copyConfigFromFirebase
+
+    copyConfigFile "./.config/secrets-ENV_TYPE" "./src/main/secrets" true "${envType}" "${fallbackEnv}"
+  }
+
+  copyConfigFromFirebase() {
     if [ ! -d ./src/main/configs ]; then
       mkdir ./src/main/configs
     fi
-
     if [ -f ./src/main/configs/default.json ]; then
       rm ./src/main/configs/default.json
     fi
-    $(resolveCommand firebase) database:get /_config/default >> ./src/main/configs/default.json
+    ${CONST_Firebase} database:get /_config/default >> ./src/main/configs/default.json
 
-    res=$($(resolveCommand firebase) database:get /_config/${envType})
+    res=$(${CONST_Firebase} database:get /_config/${envType})
     if [[ ${res} =~ null ]] && [ ! -z $fallbackEnv ]; then
-      res=$($(resolveCommand firebase) database:get /_config/${fallbackEnv})
+      res=$(${CONST_Firebase} database:get /_config/${fallbackEnv})
     fi
 
     if [[ ${res} =~ null ]]; then
@@ -76,8 +81,6 @@ BackendPackage() {
       rm ./src/main/configs/env.json
     fi
     echo $res >> ./src/main/configs/env.json
-
-    copyConfigFile "./.config/secrets-ENV_TYPE" "./src/main/secrets" true "${envType}" "${fallbackEnv}"
   }
 
   _compile() {

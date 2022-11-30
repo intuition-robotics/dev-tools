@@ -103,10 +103,12 @@ buildWorkspace() {
   #  breakpoint "before running workspace"
 
   #  workspace.toLog
-  workspace.setEnvironment
 
   workspace.purge
   workspace.clean
+
+  workspace.installGlobal
+  workspace.setEnvironment
   workspace.install
   workspace.link
   workspace.generate
