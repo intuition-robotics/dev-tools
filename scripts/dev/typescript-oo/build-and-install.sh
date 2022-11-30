@@ -108,6 +108,8 @@ buildWorkspace() {
   workspace.clean
 
   workspace.installGlobal
+
+  storeFirebasePath
   workspace.setEnvironment
   workspace.install
   workspace.link
