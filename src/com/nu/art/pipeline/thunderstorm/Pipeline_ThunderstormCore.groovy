@@ -28,7 +28,6 @@ abstract class Pipeline_ThunderstormCore<T extends Pipeline_ThunderstormCore>
 
 	@Override
 	protected void init() {
-	    workflow.deleteWorkspace
 	}
 
 	T setDocker(Docker docker) {
