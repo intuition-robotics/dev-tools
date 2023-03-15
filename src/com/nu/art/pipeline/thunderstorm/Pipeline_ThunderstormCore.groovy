@@ -129,7 +129,8 @@ abstract class Pipeline_ThunderstormCore<T extends Pipeline_ThunderstormCore>
 	}
 
 	void setDisplayName() {
-		def version = getVersion() ? " - v${getVersion()}" : ""
+//		def version = getVersion() ? " - v${getVersion()}" : ""
+		def version = "";
 		def branch = ""
 		if (repo)
 			branch = " - ${repo.getBranch()}"
