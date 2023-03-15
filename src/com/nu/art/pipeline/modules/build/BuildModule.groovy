@@ -106,6 +106,7 @@ class BuildModule
 	}
 
 	String pathToFile(String pathToFile, RunWrapper build = null) {
+		this.logWarning("WARNINGGGGGG WORK")
         logInfo("pathToFile ${pathToFile}")
         echo "pathToFile ${pathToFile}"
 		if (build == workflow.getCurrentBuild() || build == null)
