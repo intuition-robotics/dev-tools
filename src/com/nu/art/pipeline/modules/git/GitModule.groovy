@@ -43,7 +43,7 @@ class GitModule
 
         logInfo("PLEASE work ${checkoutStatusFileName}")
 
-		String pathToFile = getModule(BuildModule.class).pathToFile(checkoutStatusFileName)
+		String pathToFile = getModule(BuildModule.class).pathToFile(checkoutStatusFileName, null)
 		workflow.writeToFile(pathToFile, JsonOutput.toJson(jobGitStatus))
 		workflow.archiveArtifacts checkoutStatusFileName
 	}
