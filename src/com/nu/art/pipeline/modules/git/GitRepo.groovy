@@ -157,6 +157,6 @@ class GitRepo {
 	}
 
 	String pathToFile(String relativePath) {
-		return gitModule.getModule(BuildModule.class).pathToFile("${config.outputFolder}/${relativePath}")
+		return gitModule.getModule(BuildModule.class).pathToFile("${config.outputFolder}/${relativePath}", null)
 	}
 }

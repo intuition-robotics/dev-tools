@@ -117,7 +117,7 @@ abstract class Pipeline_ThunderstormCore<T extends Pipeline_ThunderstormCore>
 	protected String getVersion(String path) {
 		if (!path)
 			path = "${repo.getOutputFolder()}/version-app.json"
-		String pathToFile = getModule(BuildModule.class).pathToFile(path)
+		String pathToFile = getModule(BuildModule.class).pathToFile(path, null)
 
 		if (!workflow.fileExists(pathToFile))
 			return null
