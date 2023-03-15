@@ -106,9 +106,6 @@ class BuildModule
 	}
 
 	String pathToFile(String pathToFile, RunWrapper build = null) {
-        logInfo("pathToFile: ${pathToFile}")
-        sh '''echo "pathToFile: ${pathToFile}"'''
-
 		if (build == workflow.getCurrentBuild() || build == null)
 			return "${VarConsts.Var_Workspace.get()}/${pathToFile}".toString()
 
