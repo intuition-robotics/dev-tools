@@ -106,6 +106,8 @@ class BuildModule
 	}
 
 	String pathToFile(String pathToFile, RunWrapper build = null) {
+        logInfo("PLEASE work")
+
 		this.logWarning("WARNINGGGGGG WORK")
         logInfo("pathToFile ${pathToFile}")
         echo "pathToFile ${pathToFile}"

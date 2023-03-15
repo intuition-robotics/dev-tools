@@ -40,6 +40,13 @@ class GitModule
 
 		repoStatus.put(repo.config.branch, new GitStatus(repo.config.branch, commitId))
 		jobGitStatus.put(repo.getUrl(), repoStatus)
+
+        logInfo("[]PLEASE work")
+
+        this.logWarning("[]WARNINGGGGGG WORK")
+        logInfo("[]pathToFile ${pathToFile}")
+        echo "[]pathToFile ${pathToFile}"
+
 		String pathToFile = getModule(BuildModule.class).pathToFile(checkoutStatusFileName)
 		workflow.writeToFile(pathToFile, JsonOutput.toJson(jobGitStatus))
 		workflow.archiveArtifacts checkoutStatusFileName
