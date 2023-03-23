@@ -187,6 +187,10 @@ NodePackage() {
         # figure out the rest of the dirs...
       fi
     done
+  }
+
+  _linkDotDep() {
+    logInfo "Linking .dep: ${folderName}"
 
     for lib in ${@}; do
       [[ "${lib}" == "${_this}" ]] && break
@@ -198,6 +202,7 @@ NodePackage() {
 
       local backendDependencyPath="./.dependencies/${libFolderName}"
       createDir "${backendDependencyPath}"
+      logInfo "${libFolderName} => ${folderName}/.dep"
       cp -rf "${libPath}/${libFolderName}/${outputDir}"/* "${backendDependencyPath}/"
     done
   }
@@ -275,6 +280,10 @@ NodePackage() {
   }
 
   _hustle() {
+    bannerInfo "Hustle: ${folderName}"
+
+    this.linkDotDep $@
+
     if [[ "${ts_installPackages}" ]]; then
       logInfo
 
