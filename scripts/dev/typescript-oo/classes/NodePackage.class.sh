@@ -154,6 +154,10 @@ NodePackage() {
     return 0
   }
 
+  _generate() {
+    return 0
+  }
+
   _compile() {
     _cd src
     local folders=($(listFolders))
@@ -182,6 +186,19 @@ NodePackage() {
         throwWarning "Error compiling: ${module}/${folder}"
         # figure out the rest of the dirs...
       fi
+    done
+
+    for lib in ${@}; do
+      [[ "${lib}" == "${_this}" ]] && break
+      local libPath="$("${lib}.path")"
+      local libFolderName="$("${lib}.folderName")"
+      local libPackageName="$("${lib}.packageName")"
+
+      [[ ! "$(cat package.json | grep "${libPackageName}")" ]] && continue
+
+      local backendDependencyPath="./.dependencies/${libFolderName}"
+      createDir "${backendDependencyPath}"
+      cp -rf "${libPath}/${libFolderName}/${outputDir}"/* "${backendDependencyPath}/"
     done
   }
 
@@ -255,5 +272,40 @@ NodePackage() {
 
   _toLog() {
     logDebug "${folderName}: ${packageName}"
+  }
+
+  _hustle() {
+    if [[ "${ts_installPackages}" ]]; then
+      logInfo
+
+      this.install
+    fi
+
+    this.generate
+
+    if [[ "${ts_compile}" ]]; then
+      logInfo
+
+      this.compile $@
+    fi
+
+    if [[ "${ts_link}" ]]; then
+      logInfo
+
+      this.link
+    fi
+
+    if [[ "${ts_lint}" ]]; then
+      logInfo
+
+      this.lint
+    fi
+
+    if [[ "${ts_runTests}" ]]; then
+      [[ ! "${testServiceAccount}" ]] && throwError "MUST specify path to a test service account" 2
+      logInfo
+
+      this.test
+    fi
   }
 }

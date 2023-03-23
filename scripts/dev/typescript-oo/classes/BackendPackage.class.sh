@@ -86,9 +86,6 @@ BackendPackage() {
   _compile() {
     logInfo "Compiling: ${folderName}"
 
-    npm run build
-    throwWarning "Error compiling: ${folderName}"
-
     for lib in ${@}; do
       [[ "${lib}" == "${_this}" ]] && break
       local libPath="$("${lib}.path")"
@@ -101,6 +98,9 @@ BackendPackage() {
       createDir "${backendDependencyPath}"
       cp -rf "${libPath}/${libFolderName}/${outputDir}"/* "${backendDependencyPath}/"
     done
+
+    npm run build
+    throwWarning "Error compiling: ${folderName}"
   }
 
   _generate() {

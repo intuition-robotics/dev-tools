@@ -306,4 +306,8 @@ Workspace() {
 
     this.active.forEach toLog
   }
+
+  _hustle() {
+      this.active.forEach hustle "${allLibs[@]}"
+  }
 }
