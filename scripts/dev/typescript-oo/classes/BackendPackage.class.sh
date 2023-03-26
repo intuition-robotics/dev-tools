@@ -57,6 +57,11 @@ BackendPackage() {
     copyConfigFromFirebase
 
     copyConfigFile "./.config/secrets-ENV_TYPE" "./src/main/secrets" true "${envType}" "${fallbackEnv}"
+
+    [[ ! "${ts_copySecrets}" ]] && return
+    logInfo
+    bannerInfo "Copy Secrets"
+    this.copySecrets
   }
 
   copyConfigFromFirebase() {
@@ -88,12 +93,6 @@ BackendPackage() {
 
     npm run build
     throwWarning "Error compiling: ${folderName}"
-  }
-
-  _generate() {
-    [[ ! "$(array_contains "${folderName}" "${ts_generate[@]}")" ]] && return
-
-    logInfo "Generating: ${folderName}"
   }
 
   _lint() {

@@ -235,15 +235,7 @@ Workspace() {
     logInfo
     bannerInfo "Launch"
 
-    this.apps.forEach launch
-  }
-
-  _copySecrets() {
-    [[ ! "${ts_copySecrets}" ]] && return
-    logInfo
-    bannerInfo "Copy Secrets"
-
-    this.apps.forEach copySecrets
+    this.apps.forEach launch "${allLibs[@]}"
   }
 
   _deploy() {
@@ -289,15 +281,6 @@ Workspace() {
     gitNoConflictsAddCommitPush "Thunderstorm" "$(gitGetCurrentBranch)" "published version v${thunderstormVersion}"
   }
 
-  _generate() {
-    ((${#ts_generate[@]} == 0)) && return
-
-    logInfo
-    bannerInfo "Generate"
-
-    this.apps.forEach generate
-  }
-
   _toLog() {
     logVerbose
     logVerbose "Thunderstorm version: ${thunderstormVersion}"
@@ -308,6 +291,9 @@ Workspace() {
   }
 
   _hustle() {
-      this.active.forEach hustle "${allLibs[@]}"
+    logInfo "${allLibs}"
+    this.toLog
+
+#    this.active.forEach hustle "${allLibs[@]}"
   }
 }

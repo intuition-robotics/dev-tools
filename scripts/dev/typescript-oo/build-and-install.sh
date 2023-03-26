@@ -114,11 +114,8 @@ buildWorkspace() {
 
   workspace.hustle
 
-  workspace.copySecrets
   workspace.publish
-  workspace.launch
   workspace.deploy
-
 }
 
 buildWorkspace
