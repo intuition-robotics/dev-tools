@@ -136,6 +136,16 @@ abstract class Pipeline_ThunderstormCore<T extends Pipeline_ThunderstormCore>
 		getModule(BuildModule.class).setDisplayName("#${VarConsts.Var_BuildNumber.get()}: ${getName()}${branch}${version}")
 	}
 
+	protected void setCorsPolicy() {
+        path = "${repo.getOutputFolder()}/.stuff/bucket-cors-${envProjects.get(env)}.json"
+        String pathToFile = getModule(BuildModule.class).pathToFile(path, null)
+
+        if (!workflow.fileExists(pathToFile))
+            return null
+
+	    _sh("gsutil cors set ${pathToFile} gs://${envProjects.get(branch)}.appspot.com")
+	}
+
 	@Override
 	void cleanup() {
 		if (docker)
