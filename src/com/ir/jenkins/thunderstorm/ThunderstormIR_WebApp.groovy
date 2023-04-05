@@ -74,5 +74,10 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
             String registerURL = "https://us-central1-${envProjects.get(branch)}.cloudfunctions.net/api/v1/register/register-project"
             workflow.sh """curl -H "x-secret: ${Env_RegisterToken.get()}" -H "x-proxy: jenkins-job" ${registerURL}"""
         })
+
+        run("migrate", {
+            String migrateURL = "https://us-central1-${envProjects.get(branch)}.cloudfunctions.net/migrate"
+            workflow.sh """curl -H "x-secret: ${Env_RegisterToken.get()}" -H "x-proxy: jenkins-job" ${migrateURL}"""
+        })
     }
 }
