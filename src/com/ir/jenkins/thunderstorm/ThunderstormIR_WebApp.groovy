@@ -62,6 +62,8 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     void pipeline() {
         String branch = Env_Branch.get()
 
+        workflow.logDebug(""" "x-secret: ${Env_RegisterToken.get()}" """)
+
         checkout({
             getModule(SlackModule.class).setOnSuccess(getRepo().getChangeLog().toSlackMessage())
         })
