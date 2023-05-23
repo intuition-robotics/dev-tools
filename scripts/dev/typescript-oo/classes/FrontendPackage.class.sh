@@ -77,8 +77,7 @@ FrontendPackage() {
       bash ../dev-tools/scripts/utils/generate-ssl-cert.sh --output=./.config/ssl
     fi
 
-    logInfo "Installing: ${folderName}"
-    npm install
+    this.NodePackage.install ${@}
   }
 
   _generate() {
