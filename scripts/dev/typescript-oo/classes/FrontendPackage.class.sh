@@ -26,6 +26,9 @@ FrontendPackage() {
     local target2="$(getJsonValueForKeyAndIndex "../firebase.json" "target" 2)"
     ${CONST_Firebase} target:apply hosting "${target2}" "${target2}"
 
+    local target3="$(getJsonValueForKeyAndIndex "../firebase.json" "target" 3)"
+    ${CONST_Firebase} target:apply hosting "${target3}" "${target3}"
+
     ${CONST_Firebase} deploy --only hosting
     throwWarning "Error while deploying hosting"
     logInfo "Deployed: ${folderName}"
