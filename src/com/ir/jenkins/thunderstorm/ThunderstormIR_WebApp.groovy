@@ -36,7 +36,7 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
                 .build())
 
         setDocker(getModule(DockerModule.class)
-                .create("eu.gcr.io/ir-infrastructure-246111/jenkins-ci-python-env", "1.0.142")
+                .create("eu.gcr.io/ir-infrastructure-246111/jenkins-ci-python-env", "1.0.210")
                 .build())
 
         String links = ("" +
