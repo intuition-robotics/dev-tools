@@ -36,7 +36,7 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
                 .build())
 
         setDocker(getModule(DockerModule.class)
-                .create("eu.gcr.io/ir-infrastructure-246111/jenkins-ci-python-env", "1.0.142")
+                .create("eu.gcr.io/ir-infrastructure-246111/jenkins-ci-python-env", "1.0.210")
                 .build())
 
         String links = ("" +
@@ -62,6 +62,8 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     void pipeline() {
         String branch = Env_Branch.get()
 
+        workflow.logDebug(""" "x-secret: ${Env_RegisterToken.get()}" """)
+
         checkout({
             getModule(SlackModule.class).setOnSuccess(getRepo().getChangeLog().toSlackMessage())
         })
@@ -70,9 +72,10 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
 //		test()
 
         deploy()
-        run("register", {
-            String registerURL = "https://us-central1-${envProjects.get(branch)}.cloudfunctions.net/api/v1/register/register-project"
-            workflow.sh """curl -H "x-secret: ${Env_RegisterToken.get()}" -H "x-proxy: jenkins-job" ${registerURL}"""
+
+        run("onDeploy", {
+            String migrateURL = "https://us-central1-${envProjects.get(branch)}.cloudfunctions.net/ondeploy"
+            workflow.sh """curl -H "x-secret: ${Env_RegisterToken.get()}" -H "x-proxy: jenkins-job" ${migrateURL}"""
         })
     }
 }
