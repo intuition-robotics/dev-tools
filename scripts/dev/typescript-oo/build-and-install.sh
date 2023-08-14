@@ -113,7 +113,6 @@ buildWorkspace() {
   workspace.setEnvironment
   workspace.install
   workspace.link
-  workspace.generate
   workspace.compile
   workspace.lint
   workspace.test
