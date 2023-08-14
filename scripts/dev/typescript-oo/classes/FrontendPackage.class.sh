@@ -37,7 +37,7 @@ FrontendPackage() {
   _setEnvironment() {
     #    TODO: iterate on all source folders
     logDebug "Setting ${folderName} env: ${envType}"
-    copyConfigFile "./.config/config-ENV_TYPE.json" "./src/main/config.json" true "${envType}" "${fallbackEnv}"
+    copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
   }
 
   _compile() {
