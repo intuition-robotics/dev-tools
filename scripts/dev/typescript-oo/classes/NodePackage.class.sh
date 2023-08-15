@@ -35,57 +35,14 @@ NodePackage() {
   }
 
   _install() {
-    local libs=(${@})
-
-    backupPackageJson() {
-      cp package.json _package.json
-      throwError "Error backing up package.json in module: ${1}"
-    }
-
-    restorePackageJson() {
-      trap 'restorePackageJson' SIGINT
-      rm package.json
-      throwError "Error restoring package.json in module: ${1}"
-
-      mv _package.json package.json
-      throwError "Error restoring package.json in module: ${1}"
-      trap - SIGINT
-    }
-
-    cleanPackageJson() {
-      local i
-      for lib in "${libs[@]}"; do
-        [[ "${lib}" == "${_this}" ]] && break
-
-        local libPackageName="$("${lib}.packageName")"
-        file_replace "^.*${libPackageName}.*$" "" package.json "" "%"
-      done
-    }
-
     deleteFile package-lock.json
-    deleteDir "./node_modules/@nu-art"
     deleteDir "./node_modules/@intuitionrobotics"
-    for lib in "${libs[@]}"; do
-      [[ "${lib}" == "${_this}" ]] && break
-
-      local libPackageName="$("${lib}.packageName")"
-      deleteDir "./node_modules/${libPackageName}"
-    done
-
-    backupPackageJson "${folderName}"
-    cleanPackageJson
-
-    trap 'restorePackageJson' SIGINT
 
     logInfo "Installing: ${folderName}"
     logInfo
 
     npm install
     throwError "Error installing module"
-
-    trap - SIGINT
-
-    restorePackageJson "${folderName}"
   }
 
   _link() {
