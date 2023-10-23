@@ -8,26 +8,16 @@ FrontendPackage() {
 
     logInfo "Deploying: ${folderName}"
 
-    getJsonValueForKeyAndIndex() {
-      local fileName=${1}
-      local key=${2}
-      local i=${3}
-      if [[ ! "${i}" ]]; then
-          i=1
+    firebase_json=$(<../firebase.json)
+    hosting_array=$(echo "$firebase_json" | sed -n '/"hosting": \[/,/^\s*\],$/p')
+
+    while read -r -d '}' target; do
+      # Extract the "target" value
+      target_name=$(echo "$target" | grep -o '"target": "[^"]*' | cut -d'"' -f4)
+      if [ -n "$target_name" ]; then
+        ${CONST_Firebase} target:apply hosting "$target_name" "$target_name"
       fi
-
-      local value=$(cat "${fileName}" | grep "\"${key}\":" | head "-${i}" | tail -1 | sed -E "s/.*\"${key}\".*\"(.*)\".*/\1/")
-      echo "${value}"
-    }
-
-    local target1="$(getJsonValueForKeyAndIndex "../firebase.json" "target" 1)"
-    ${CONST_Firebase} target:apply hosting "${target1}" "${target1}"
-
-    local target2="$(getJsonValueForKeyAndIndex "../firebase.json" "target" 2)"
-    ${CONST_Firebase} target:apply hosting "${target2}" "${target2}"
-
-    local target3="$(getJsonValueForKeyAndIndex "../firebase.json" "target" 3)"
-    ${CONST_Firebase} target:apply hosting "${target3}" "${target3}"
+    done <<< "$hosting_array"
 
     ${CONST_Firebase} deploy --only hosting
     throwWarning "Error while deploying hosting"
