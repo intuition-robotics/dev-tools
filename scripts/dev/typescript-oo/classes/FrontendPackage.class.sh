@@ -12,14 +12,18 @@ FrontendPackage() {
     hosting_array=$(echo "$firebase_json" | sed -n '/"hosting": \[/,/^\s*\],$/p')
 
     while read -r -d '}' target; do
+      public_directory=$(echo "$target" | grep -o '"public": "[^"]*' | cut -d'"' -f4)
+      [[ ! "$(array_contains "$(echo "$public_directory" | cut -d'/' -f1)" "${ts_deploy[@]}")" ]] && continue
+
       # Extract the "target" value
       target_name=$(echo "$target" | grep -o '"target": "[^"]*' | cut -d'"' -f4)
+      echo ${target_name}
       if [ -n "$target_name" ]; then
         ${CONST_Firebase} target:apply hosting "$target_name" "$target_name"
+        ${CONST_Firebase} deploy --only hosting:"$target_name"
       fi
     done <<< "$hosting_array"
 
-    ${CONST_Firebase} deploy --only hosting
     throwWarning "Error while deploying hosting"
     logInfo "Deployed: ${folderName}"
   }
