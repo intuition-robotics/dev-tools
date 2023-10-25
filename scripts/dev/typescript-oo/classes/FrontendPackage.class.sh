@@ -17,7 +17,6 @@ FrontendPackage() {
 
       # Extract the "target" value
       target_name=$(echo "$target" | grep -o '"target": "[^"]*' | cut -d'"' -f4)
-      echo ${target_name}
       if [ -n "$target_name" ]; then
         ${CONST_Firebase} target:apply hosting "$target_name" "$target_name"
         ${CONST_Firebase} deploy --only hosting:"$target_name"
