@@ -104,70 +104,19 @@ buildWorkspace() {
 
   #  workspace.toLog
 
-  bannerInfo "Purge & Clean"
-
-  for active in "${_activeLibs[@]}"; do
-    _pushd "$("${active}.path")/$("${active}.folderName")"
-    "${active}".purge
-    "${active}".clean
-    _popd
-  done
+  workspace.purgeAndClean
 
   workspace.installGlobal
   storeFirebasePath
   workspace.setEnvironment
 
-  bannerInfo "Install & Link"
+  workspace.installAndLink
+  workspace.generate
 
-  for active in "${_activeLibs[@]}"; do
-    _pushd "$("${active}.path")/$("${active}.folderName")"
-    "${active}.install" "${_allLibs[@]}"
-    "${active}.link" "${_allLibs[@]}"
-    _popd
-  done
+  workspace.compile
+  workspace.lintAndTest
 
-  bannerInfo "Generate"
-
-  for app in "${_apps[@]}"; do
-    _pushd "$("${active}.path")/$("${active}.folderName")"
-    "${app}".generate
-    _popd
-  done
-
-  bannerInfo "Compile"
-
-  for active in "${_activeLibs[@]}"; do
-    _pushd "$("${active}.path")/$("${active}.folderName")"
-    "${active}.compile" "${_allLibs[@]}"
-    _popd
-  done
-
-  [[ "${ts_watch}" ]] && deleteFile "${CONST_BuildWatchFile}"
-  for lib in "${_allLibs[@]}"; do
-    local length=$("${lib}.newWatchIds.length")
-    ((length == 0)) && continue
-    for ((i = 0; i < length; i++)); do
-      local var="${lib}_newWatchIds[${i}]"
-      echo -e "${!var}" >> "${CONST_BuildWatchFile}"
-    done
-  done
-
-  bannerInfo "Lint & Test"
-
-  for active in "${_activeLibs[@]}"; do
-    _pushd "$("${active}.path")/$("${active}.folderName")"
-    "${active}".lint
-    "${active}".test
-    _popd
-  done
-
-  bannerInfo "Copy Secrets"
-
-  for app in "${_apps[@]}"; do
-    _pushd "$("${active}.path")/$("${active}.folderName")"
-    "${app}".copySecrets
-    _popd
-  done
+  workspace.copySecrets
 
   workspace.publish
   workspace.launch

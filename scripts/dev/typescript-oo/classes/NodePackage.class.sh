@@ -112,13 +112,10 @@ NodePackage() {
   }
 
   _copySecrets() {
-    [[ ! "${ts_copySecrets}" ]] && return
-
     return 0
   }
 
   _compile() {
-    [[ ! "${ts_compile}" ]] && return
     _cd src
     local folders=($(listFolders))
     _cd..

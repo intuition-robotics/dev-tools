@@ -42,8 +42,6 @@ FrontendPackage() {
   }
 
   _compile() {
-    [[ ! "${ts_compile}" ]] && return
-
     logInfo "Compiling: ${folderName}"
 
     npm run build
@@ -91,8 +89,6 @@ FrontendPackage() {
   }
 
   _generate() {
-    ((${#ts_generate[@]} == 0)) && return
-
     [[ ! "$(array_contains "${folderName}" "${ts_generate[@]}")" ]] && return
 
     logInfo "Generating: ${folderName}"
