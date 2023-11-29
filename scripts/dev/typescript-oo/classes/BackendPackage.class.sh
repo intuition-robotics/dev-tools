@@ -14,6 +14,8 @@ BackendPackage() {
   }
 
   _copySecrets() {
+    [[ ! "${ts_copySecrets}" ]] && return
+
     if [[ ! -e "./src/main/secrets" ]]; then
       return 0
     fi
@@ -84,6 +86,8 @@ BackendPackage() {
   }
 
   _compile() {
+    [[ ! "${ts_compile}" ]] && return
+
     logInfo "Compiling: ${folderName}"
 
     npm run build
@@ -104,12 +108,16 @@ BackendPackage() {
   }
 
   _generate() {
+    ((${#ts_generate[@]} == 0)) && return
+
     [[ ! "$(array_contains "${folderName}" "${ts_generate[@]}")" ]] && return
 
     logInfo "Generating: ${folderName}"
   }
 
   _lint() {
+    [[ ! "${ts_lint}" ]] && return
+
     logInfo "Linting: ${folderName}"
 
     npm run lint
@@ -121,10 +129,5 @@ BackendPackage() {
 
     logInfo "Launching: ${folderName}"
     npm run launch
-  }
-
-  _clean() {
-    this.NodePackage.clean
-    deleteDir ".dependencies"
   }
 }
