@@ -33,7 +33,7 @@ NodePackage() {
 
     logInfo "Purging: ${folderName}"
     deleteDir node_modules
-    deleteDir package-lock.json
+    [[ -e "package-lock.json" ]] && rm package-lock.json
   }
 
   _install() {
