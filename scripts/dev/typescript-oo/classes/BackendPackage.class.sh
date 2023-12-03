@@ -90,6 +90,8 @@ BackendPackage() {
   }
 
   _compile() {
+    [[ ! "${ts_compile}" ]] && return
+
     logInfo "Compiling: ${folderName}"
 
     npm run build

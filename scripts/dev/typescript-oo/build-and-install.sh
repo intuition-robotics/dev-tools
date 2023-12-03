@@ -104,6 +104,7 @@ buildWorkspace() {
 
   #  workspace.toLog
 
+  storeFirebasePath
   workspace.flow
 
   workspace.publish

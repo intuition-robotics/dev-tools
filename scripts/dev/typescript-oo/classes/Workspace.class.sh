@@ -152,17 +152,14 @@ Workspace() {
   }
 
   _flow() {
-      this.purgeAndClean
+    this.installGlobal
+    this.setEnvironment
 
-      this.installGlobal
-      storeFirebasePath
-      this.setEnvironment
-
-      this.installAndLink
-      this.generate
-
-      this.compile
-      this.lintAndTest
+    for _active in "${active[@]}"; do
+      _pushd "$("${_active}.path")/$("${_active}.folderName")"
+      "${_active}".flow
+      _popd
+    done
   }
 
   _purgeAndClean() {

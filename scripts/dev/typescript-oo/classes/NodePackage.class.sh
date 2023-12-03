@@ -112,6 +112,8 @@ NodePackage() {
   }
 
   _compile() {
+    [[ ! "${ts_compile}" ]] && return
+
     _cd src
     local folders=($(listFolders))
     _cd..
@@ -217,5 +219,21 @@ NodePackage() {
 
   _toLog() {
     logDebug "${folderName}: ${packageName}"
+  }
+
+  _generate() {
+    return 0
+  }
+
+  _flow() {
+    this.purge
+    this.clean
+
+    this.install
+    this.link
+    this.generate
+    this.compile
+    this.lint
+    this.test
   }
 }
