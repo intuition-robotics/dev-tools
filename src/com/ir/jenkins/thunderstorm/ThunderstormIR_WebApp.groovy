@@ -67,8 +67,7 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
         checkout({
             getModule(SlackModule.class).setOnSuccess(getRepo().getChangeLog().toSlackMessage())
         })
-        install()
-        build()
+        addStage("Deploy & Compile", { this.installAndBuild() })
 //		test()
 
         deploy()
@@ -77,5 +76,9 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
             String migrateURL = "https://us-central1-${envProjects.get(branch)}.cloudfunctions.net/ondeploy"
             workflow.sh """curl -H "x-secret: ${Env_RegisterToken.get()}" -H "x-proxy: jenkins-job" ${migrateURL}"""
         })
+    }
+
+    void installAndBuild()  {
+        _sh("bash build-and-install.sh --set-env=${this.env} -fe=${this.fallEnv} --init --install --debug")
     }
 }

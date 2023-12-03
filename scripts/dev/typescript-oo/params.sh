@@ -153,6 +153,7 @@ extractParams() {
     "--install" | "-i")
       #DOC: Will run 'npm install' in all project packages
       ts_installPackages=true
+      ts_compile=true
       ;;
 
     "--init")
@@ -167,32 +168,11 @@ extractParams() {
       ts_updatePackages=true
       ;;
 
-    "--generate" | "-g")
-      ts_generate+=(${backendApps[@]})
-      ts_generate+=(${frontendApps[@]})
-      ts_compile=
-      ;;
-
-    "--generate="* | "-g="*)
-      #DOC: Will generate sources in the apps if needed
-      ts_generate+=($(regexParam "--generate|-g" "${paramValue}"))
-      ts_compile=
-      ;;
-
-    "--link" | "-ln")
-      #DOC: Would link dependencies between project packages
-
-      ;;
-
-    "--link-only" | "-lo")
-      #DOC: Would ONLY link dependencies between project packages
-
-      ts_compile=
-      ;;
-
     "--no-build" | "-nb")
       #DOC: Skip the build and link steps
       ts_compile=
+      # If I am installing I need to compile as well
+      [[ "${ts_installPackages}" ]] && ts_compile=true
 
       ;;
 
