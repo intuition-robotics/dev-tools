@@ -31,7 +31,7 @@ class Pipeline_ThunderstormWebApp<T extends Pipeline_ThunderstormWebApp>
 	}
 
 	protected void _install() {
-		_sh("bash build-and-install.sh --set-env=${this.env} -fe=${this.fallEnv} --install --no-build --link --debug")
+		_sh("bash build-and-install.sh --set-env=${this.env} -fe=${this.fallEnv} --init --install --no-build --debug")
 	}
 
 	void _deploy() {
