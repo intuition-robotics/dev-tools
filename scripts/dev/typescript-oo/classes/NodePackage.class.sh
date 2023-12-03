@@ -29,12 +29,16 @@ NodePackage() {
   }
 
   _purge() {
+    [[ ! "${ts_purge}" ]] && return
+
     logInfo "Purging: ${folderName}"
     deleteDir node_modules
     [[ -e "package-lock.json" ]] && rm package-lock.json
   }
 
   _install() {
+    [[ ! "${ts_installPackages}" ]] && return
+
     logInfo "Installing: ${folderName}"
     logInfo
 
@@ -42,6 +46,8 @@ NodePackage() {
   }
 
   _link() {
+    [[ ! "${ts_link}" ]] && return
+
     local lib=
     createFolder "${outputDir}"
     copyFileToFolder package.json "${outputDir}"
@@ -91,6 +97,8 @@ NodePackage() {
   }
 
   _clean() {
+    [[ ! "${ts_clean}" ]] && return
+
     logInfo "Cleaning: ${folderName}"
 
     [[ ! "${outputTestDir}" ]] && throwError "No test output directory specified" 2
@@ -103,11 +111,9 @@ NodePackage() {
     clearFolder "${outputTestDir}"
   }
 
-  _copySecrets() {
-    return 0
-  }
-
   _compile() {
+    [[ ! "${ts_compile}" ]] && return
+
     _cd src
     local folders=($(listFolders))
     _cd..
@@ -139,6 +145,8 @@ NodePackage() {
   }
 
   _lint() {
+    [[ ! "${ts_lint}" ]] && return
+
     _cd src
     local folders=($(listFolders))
     _cd..
@@ -160,6 +168,9 @@ NodePackage() {
   }
 
   _test() {
+    [[ ! "${ts_runTests}" ]] && return
+    [[ ! "${testServiceAccount}" ]] && throwError "MUST specify path to a test service account" 2
+
     [[ ! -e "./src/test/tsconfig.json" ]] && logVerbose "./src/test/tsconfig.json was not found... skipping test phase" && return 0
     [[ "${testServiceAccount}" ]] && [[ ! -e "${testServiceAccount}" ]] && throwError "Service account cannot be resolved from path: ${testServiceAccount}" 2
 
@@ -208,5 +219,21 @@ NodePackage() {
 
   _toLog() {
     logDebug "${folderName}: ${packageName}"
+  }
+
+  _generate() {
+    return 0
+  }
+
+  _flow() {
+    this.purge
+    this.clean
+
+    this.install
+    this.link
+    this.generate
+    this.compile
+    this.lint
+    this.test
   }
 }

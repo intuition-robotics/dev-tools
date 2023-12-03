@@ -42,6 +42,8 @@ FrontendPackage() {
   }
 
   _compile() {
+    [[ ! "${ts_compile}" ]] && return
+
     logInfo "Compiling: ${folderName}"
 
     npm run build
@@ -62,6 +64,8 @@ FrontendPackage() {
   }
 
   _lint() {
+    [[ ! "${ts_lint}" ]] && return
+
     logInfo "Linting: ${folderName}"
 
     npm run lint
@@ -76,6 +80,8 @@ FrontendPackage() {
   }
 
   _install() {
+    [[ ! "${ts_installPackages}" ]] && return
+
     if [[ ! -e "./.config/ssl/server-key.pem" ]]; then
       createDir "./.config/ssl"
       bash ../dev-tools/scripts/utils/generate-ssl-cert.sh --output=./.config/ssl

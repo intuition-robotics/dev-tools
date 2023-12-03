@@ -104,21 +104,9 @@ buildWorkspace() {
 
   #  workspace.toLog
 
-  workspace.purge
-  workspace.clean
-
-  workspace.installGlobal
-
   storeFirebasePath
-  workspace.setEnvironment
-  workspace.install
-  workspace.link
-  workspace.generate
-  workspace.compile
-  workspace.lint
-  workspace.test
+  workspace.flow
 
-  workspace.copySecrets
   workspace.publish
   workspace.launch
   workspace.deploy

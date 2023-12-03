@@ -5,6 +5,8 @@ BackendPackage() {
   extends class NodePackage
 
   _deploy() {
+    _copySecrets
+
     [[ ! "$(array_contains "${folderName}" "${ts_deploy[@]}")" ]] && return
 
     logInfo "Deploying: ${folderName}"
@@ -14,9 +16,13 @@ BackendPackage() {
   }
 
   _copySecrets() {
+    [[ ! "${ts_copySecrets}" ]] && return
+
     if [[ ! -e "./src/main/secrets" ]]; then
       return 0
     fi
+
+    bannerInfo "Copy Secrets"
 
     logInfo "Copying Secrets: ${folderName}"
     for i in `cat ./src/main/secrets`; do
@@ -84,6 +90,8 @@ BackendPackage() {
   }
 
   _compile() {
+    [[ ! "${ts_compile}" ]] && return
+
     logInfo "Compiling: ${folderName}"
 
     npm run build
@@ -110,6 +118,8 @@ BackendPackage() {
   }
 
   _lint() {
+    [[ ! "${ts_lint}" ]] && return
+
     logInfo "Linting: ${folderName}"
 
     npm run lint
@@ -121,10 +131,5 @@ BackendPackage() {
 
     logInfo "Launching: ${folderName}"
     npm run launch
-  }
-
-  _clean() {
-    this.NodePackage.clean
-    deleteDir ".dependencies"
   }
 }

@@ -151,22 +151,40 @@ Workspace() {
     this.active.forEach assertNoCyclicImport
   }
 
-  _purge() {
-    [[ ! "${ts_purge}" ]] && return
+  _flow() {
+    this.installGlobal
+    this.setEnvironment
 
-    logInfo
-    bannerInfo "Purge"
-
-    this.active.forEach purge
+    for _active in "${active[@]}"; do
+      _pushd "$("${_active}.path")/$("${_active}.folderName")"
+      "${_active}".flow
+      _popd
+    done
   }
 
-  _clean() {
-    [[ ! "${ts_clean}" ]] && return
+  _purgeAndClean() {
+    if [[ ! "${ts_purge}" ]] && [[ ! "${ts_clean}" ]]; then
+      return
+    fi
 
-    logInfo
-    bannerInfo "Clean"
+    if [[ ! "${ts_clean}" ]]; then
+      bannerInfo "Purge"
+    fi
 
-    this.active.forEach clean
+    if [[ ! "${ts_purge}" ]]; then
+      bannerInfo "Clean"
+    fi
+
+    if [[ "${ts_purge}" ]] && [[ "${ts_clean}" ]]; then
+      bannerInfo "Purge & Clean"
+    fi
+
+    for _active in "${active[@]}"; do
+      _pushd "$("${_active}.path")/$("${_active}.folderName")"
+      "${_active}".purge
+      "${_active}".clean
+      _popd
+    done
   }
 
   _installGlobal() {
@@ -176,30 +194,42 @@ Workspace() {
     fi
   }
 
-  _install() {
-    if [[ "${ts_installPackages}" ]]; then
-      logInfo
-      bannerInfo "Install"
-
-      this.active.forEach install "${allLibs[@]}"
+  _installAndLink() {
+    if [[ ! "${ts_installPackages}" ]] && [[ ! "${ts_link}" ]]; then
+      return
     fi
-  }
 
-  _link() {
-    [[ ! "${ts_link}" ]] && return
+    if [[ ! "${ts_installPackages}" ]]; then
+      bannerInfo "Link"
+    fi
 
-    logInfo
-    bannerInfo "Link"
+    if [[ ! "${ts_link}" ]]; then
+      bannerInfo "Install"
+    fi
 
-    this.active.forEach link "${allLibs[@]}"
+    if [[ "${ts_installPackages}" ]] && [[ "${ts_link}" ]]; then
+      bannerInfo "Install & Link"
+    fi
+
+    for _active in "${active[@]}"; do
+      _pushd "$("${_active}.path")/$("${_active}.folderName")"
+      "${_active}.install" "${allLibs[@]}"
+      "${_active}.link" "${allLibs[@]}"
+      _popd
+    done
   }
 
   _compile() {
     [[ ! "${ts_compile}" ]] && return
+
     logInfo
     bannerInfo "Compile"
 
-    this.active.forEach compile "${allLibs[@]}"
+    for _active in "${active[@]}"; do
+      _pushd "$("${_active}.path")/$("${_active}.folderName")"
+      "${_active}.compile" "${allLibs[@]}"
+      _popd
+    done
 
     [[ "${ts_watch}" ]] && deleteFile "${CONST_BuildWatchFile}"
     for lib in "${allLibs[@]}"; do
@@ -212,21 +242,29 @@ Workspace() {
     done
   }
 
-  _lint() {
-    [[ ! "${ts_lint}" ]] && return
-    logInfo
-    bannerInfo "Lint"
+  _lintAndTest() {
+    if [[ ! "${ts_runTests}" ]] && [[ ! "${ts_lint}" ]]; then
+      return
+    fi
 
-    this.active.forEach lint
-  }
+    if [[ ! "${ts_runTests}" ]]; then
+      bannerInfo "Lint"
+    fi
 
-  _test() {
-    [[ ! "${ts_runTests}" ]] && return
-    [[ ! "${testServiceAccount}" ]] && throwError "MUST specify path to a test service account" 2
+    if [[ ! "${ts_lint}" ]]; then
+      bannerInfo "Test"
+    fi
 
-    logInfo
-    bannerInfo "Test"
-    this.active.forEach test
+    if [[ "${ts_runTests}" ]] && [[ "${ts_lint}" ]]; then
+      bannerInfo "Lint & Test"
+    fi
+
+    for _active in "${active[@]}"; do
+      _pushd "$("${_active}.path")/$("${_active}.folderName")"
+      "${_active}".lint
+      "${_active}".test
+      _popd
+    done
   }
 
   _launch() {
@@ -236,14 +274,6 @@ Workspace() {
     bannerInfo "Launch"
 
     this.apps.forEach launch
-  }
-
-  _copySecrets() {
-    [[ ! "${ts_copySecrets}" ]] && return
-    logInfo
-    bannerInfo "Copy Secrets"
-
-    this.apps.forEach copySecrets
   }
 
   _deploy() {
@@ -295,7 +325,11 @@ Workspace() {
     logInfo
     bannerInfo "Generate"
 
-    this.apps.forEach generate
+    for _app in "${apps[@]}"; do
+      _pushd "$("${_app}.path")/$("${_app}.folderName")"
+      "${_app}".generate
+      _popd
+    done
   }
 
   _toLog() {
