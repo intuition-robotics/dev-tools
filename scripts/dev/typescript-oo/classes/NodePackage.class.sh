@@ -37,12 +37,15 @@ NodePackage() {
   }
 
   _install() {
-    [[ ! "${ts_installPackages}" ]] && return
+    [[ ! "${ts_installPackages}" ]] && [[ ! "${ts_updatePackages}" ]] && return
 
-    logInfo "Installing: ${folderName}"
-    logInfo
-
-    npm install
+    if [[ "${ts_updatePackages}" ]]; then
+      logInfo "Updating: ${folderName}"
+      npm update
+    else
+      logInfo "Installing: ${folderName}"
+      npm install
+    fi
   }
 
   _clean() {
@@ -68,52 +71,18 @@ NodePackage() {
     _cd..
 
     for folder in "${folders[@]}"; do
-      [[ "${folder}" == "test" ]] && continue
-      logInfo "Compiling($(tsc -v)): ${folderName}/${folder}"
-      if [[ "${ts_watch}" ]]; then
-
-        local parts=
-        for watchLine in "${watchIds[@]}"; do
-          parts=(${watchLine[@]})
-          [[ "${parts[1]}" == "${folder}" ]] && break
-        done
-
-        [[ "${parts[2]}" ]] && execute "pkill -P ${parts[2]}"
-
-        tsc-watch -p "./src/${folder}/tsconfig.json" --rootDir "./src/${folder}" --outDir "${outputDir}" ${compilerFlags[@]} --onSuccess "bash ../relaunch-backend.sh" &
-
-        local _pid="${folderName} ${folder} $!"
-        logInfo "${_pid}"
-        newWatchIds+=("${_pid}")
-      else
-        tsc -p "./src/${folder}/tsconfig.json" --rootDir "./src/${folder}" --outDir "${outputDir}" ${compilerFlags[@]}
-        throwWarning "Error compiling: ${module}/${folder}"
-        # figure out the rest of the dirs...
-      fi
+      tsc -p "./src/${folder}/tsconfig.json" --rootDir "./src/${folder}" --outDir "${outputDir}" ${compilerFlags[@]}
     done
+    throwWarning "Error compiling: ${module}/${folder}"
   }
 
   _lint() {
     [[ ! "${ts_lint}" ]] && return
 
-    _cd src
-    local folders=($(listFolders))
-    _cd..
+    logInfo "Linting: ${folderName}"
 
-    for folder in "${folders[@]}"; do
-      [[ "${folder}" == "test" ]] && continue
-
-      if [[ -e ".eslintrc.js" ]]; then
-        logInfo "ES Linting: ${folderName}/${folder}"
-        eslint --ext .ts --ext .tsx "./src/${folder}"
-        throwError "Error while ES linting: ${module}/${folder}"
-
-      elif [[ -e "tslint.json" ]]; then
-        logInfo "Linting: ${folderName}/${folder}"
-        tslint --project "./src/${folder}/tsconfig.json"
-        throwError "Error while linting: ${module}/${folder}"
-      fi
-    done
+    npm run lint
+    throwWarning "Error linting: ${folderName}"
   }
 
   _test() {
@@ -168,20 +137,5 @@ NodePackage() {
 
   _toLog() {
     logDebug "${folderName}: ${packageName}"
-  }
-
-  _generate() {
-    return 0
-  }
-
-  _flow() {
-    this.purge
-    this.clean
-
-    this.install
-    this.generate
-    this.compile
-    this.lint
-    this.test
   }
 }

@@ -98,21 +98,6 @@ BackendPackage() {
     throwWarning "Error compiling: ${folderName}"
   }
 
-  _generate() {
-    [[ ! "$(array_contains "${folderName}" "${ts_generate[@]}")" ]] && return
-
-    logInfo "Generating: ${folderName}"
-  }
-
-  _lint() {
-    [[ ! "${ts_lint}" ]] && return
-
-    logInfo "Linting: ${folderName}"
-
-    npm run lint
-    throwWarning "Error linting: ${folderName}"
-  }
-
   _launch() {
     [[ ! "$(array_contains "${folderName}" "${ts_launch[@]}")" ]] && return
 
@@ -121,9 +106,9 @@ BackendPackage() {
   }
 
   _install() {
-    [[ ! "${ts_installPackages}" ]] && return
+    [[ ! "${ts_installPackages}" ]] && [[ ! "${ts_updatePackages}" ]] && return
 
-    logInfo "Installing: ${folderName}"
+    logInfo "Linking Dep: ${folderName}"
     logInfo
 
     for lib in ${@}; do
@@ -136,14 +121,15 @@ BackendPackage() {
 
       local backendDependencyPath="./.dependencies/${libFolderName}"
       createDir "${backendDependencyPath}"
-      cp -rf "${libPath}/${libFolderName}/${outputDir}"/* "${backendDependencyPath}/"
+      ln -s "${libPath}/${libFolderName}/${outputDir}"/* "${backendDependencyPath}/"
     done
 
-    npm install
+    this.NodePackage.install ${@}
   }
 
-  _clean() {
-    this.NodePackage.clean
+  _purge() {
+    [[ ! "${ts_purge}" ]] && return
+    this.NodePackage.purge
     deleteDir ".dependencies"
   }
 }

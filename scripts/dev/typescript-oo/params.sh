@@ -9,12 +9,12 @@ ts_installGlobals=
 ts_installPackages=
 ts_compile=true
 ts_watch=
-ts_link=
 ts_linkThunderstorm=
 ts_lint=
 ts_runTests=
 ts_publish=
 ts_copySecrets=
+ts_updatePackages=
 ts_fileToExecute="index.js"
 ts_feApp=
 
@@ -47,9 +47,9 @@ params=(
   ts_clean
   ts_installGlobals
   ts_installPackages
+  ts_updatePackages
   ts_compile
   ts_watch
-  ts_link
   ts_linkThunderstorm
   ts_lint
   ts_runTests
@@ -109,7 +109,6 @@ extractParams() {
       ts_purge=true
       ts_clean=true
       ts_installPackages=true
-      ts_link=true
       ;;
 
     "--app="*)
@@ -122,7 +121,6 @@ extractParams() {
       #DOC: Will delete the output(dist) & test output(dist-test) folders in all project packages
 
       ts_clean=true
-      ts_link=true
       ;;
 
     "--copy-secrets" | "-cs")
@@ -152,59 +150,49 @@ extractParams() {
       fallbackEnv=$(regexParam "--fallback-env|-fe" "${paramValue}")
       ;;
 
-    "--setup" | "-s")
-      #WARNING: --setup / -s are deprecated... use --install or -i
-      logWarning "--setup / -s are deprecated... use --install or -i"
-      exit 2
-      ;;
-
     "--install" | "-i")
       #DOC: Will run 'npm install' in all project packages
-      #DOC: Will perform --link
-      ts_installGlobals=true
       ts_installPackages=true
-      ts_link=true
       ;;
 
-    "--install-packages" | "-ip")
-      #DOC: Will run 'npm install' in all project packages
-      #DOC: Will perform --link
-
+    "--init")
+      #DOC: To run the first time you clone the project
+      ts_installGlobals=true
       ts_installPackages=true
-      ts_link=true
+      ;;
+
+    "--update" | "-u")
+      #DOC: Will run 'npm update' in all project packages
+
+      ts_updatePackages=true
       ;;
 
     "--generate" | "-g")
       ts_generate+=(${backendApps[@]})
       ts_generate+=(${frontendApps[@]})
-      ts_link=
       ts_compile=
       ;;
 
     "--generate="* | "-g="*)
       #DOC: Will generate sources in the apps if needed
       ts_generate+=($(regexParam "--generate|-g" "${paramValue}"))
-      ts_link=
       ts_compile=
       ;;
 
     "--link" | "-ln")
       #DOC: Would link dependencies between project packages
 
-      ts_link=true
       ;;
 
     "--link-only" | "-lo")
       #DOC: Would ONLY link dependencies between project packages
 
-      ts_link=true
       ts_compile=
       ;;
 
     "--no-build" | "-nb")
       #DOC: Skip the build and link steps
       ts_compile=
-      ts_link=
 
       ;;
 
@@ -213,7 +201,6 @@ extractParams() {
       #NOTE: MUST have ThunderstormHome env variable defined and point to the Thunderstorm sample project
 
       [[ ! "${ThunderstormHome}" ]] && throwError "ThunderstormHome must be defined as an Environment variable" 2
-      ts_link=true
       ts_linkThunderstorm=true
       ;;
 
@@ -221,7 +208,6 @@ extractParams() {
       #DOC: Will link the output folder of the libraries of thunderstorm that exists under the give path
       #PARAM=path-to-thunderstorm-folder
 
-      ts_link=true
       ts_linkThunderstorm=true
 
       local temp=$(regexParam "--thunderstorm-home|-th" "${paramValue}")
@@ -314,28 +300,24 @@ extractParams() {
       ts_deploy+=(${backendApps[@]})
       ts_deploy+=(${frontendApps[@]})
       ts_copySecrets=true
-      ts_link=true
       ;;
 
     "--deploy="* | "-d="*)
       #DOC: Will add the provided App to the deploy list
 
       ts_deploy+=($(regexParam "--deploy|-d" "${paramValue}"))
-      ts_link=true
       ;;
 
     "--deploy-backend" | "-db")
       #DOC: Will add the app-backend to the deploy list
       ts_copySecrets=true
       ts_deploy+=(app-backend)
-      ts_link=true
       ;;
 
     "--deploy-frontend" | "-df")
       #DOC: Will add the app-frontend to the deploy list
 
       ts_deploy+=(app-frontend)
-      ts_link=true
       ;;
 
     "--set-version="* | "-sv="*)
@@ -343,7 +325,6 @@ extractParams() {
       #PARAM=x.y.z
 
       appVersion=$(regexParam "--set-version|-sv" "${paramValue}")
-      ts_link=true
       ts_compile=true
       ts_lint=true
       ;;
@@ -410,7 +391,6 @@ extractParams() {
       local p=${promoteThunderstormVersion}
       [[ "${p}" != "patch" ]] && [[ "${p}" != "minor" ]] && [[ "${p}" != "major" ]] && throwError "Bad version type: ${promoteThunderstormVersion}" 2
 
-      ts_link=true
       ts_clean=true
       ts_compile=true
       ts_publish=true
@@ -422,7 +402,6 @@ extractParams() {
       #WARNING: ONLY used for publishing Thunderstorm!!
       #WARNING: Use only if you REALLY understand the lifecycle of the project and script!!
 
-      ts_link=
       ts_clean=
       ts_compile=
       ts_lint=

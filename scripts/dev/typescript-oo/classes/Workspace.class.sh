@@ -157,7 +157,12 @@ Workspace() {
 
     for _active in "${active[@]}"; do
       _pushd "$("${_active}.path")/$("${_active}.folderName")"
-      "${_active}".flow
+      "${_active}".purge
+      "${_active}".clean
+      "${_active}".install "${allLibs[@]}"
+      "${_active}".compile
+      "${_active}".lint
+      "${_active}".test
       _popd
     done
   }
