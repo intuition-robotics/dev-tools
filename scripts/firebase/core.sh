@@ -8,11 +8,11 @@ verifyFirebaseProjectIsAccessible() {
   local firebaseProject=${1}
 
   logDebug "Verifying You are logged in to firebase tools...'"
-  [[ "${USER,,}" != "jenkins" ]] && ${CONST_Firebase} login
+  [[ "${USER,,}" != "jenkins" ]] && $(resolveCommand firebase) login
   logDebug
 
   logDebug "Verifying access to firebase project: '${firebaseProject}'"
-  local output=$(${CONST_Firebase} projects:list | grep "${firebaseProject}" 2>&1)
+  local output=$($(resolveCommand firebase) projects:list | grep "${firebaseProject}" 2>&1)
   if [[ "${output}" =~ "Command requires authentication" ]]; then
     logError "    User not logged in"
     return 2
