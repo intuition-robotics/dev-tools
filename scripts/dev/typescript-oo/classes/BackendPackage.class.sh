@@ -96,19 +96,6 @@ BackendPackage() {
 
     npm run build
     throwWarning "Error compiling: ${folderName}"
-
-    for lib in ${@}; do
-      [[ "${lib}" == "${_this}" ]] && break
-      local libPath="$("${lib}.path")"
-      local libFolderName="$("${lib}.folderName")"
-      local libPackageName="$("${lib}.packageName")"
-
-      [[ ! "$(cat package.json | grep "${libPackageName}")" ]] && continue
-
-      local backendDependencyPath="./.dependencies/${libFolderName}"
-      createDir "${backendDependencyPath}"
-      cp -rf "${libPath}/${libFolderName}/${outputDir}"/* "${backendDependencyPath}/"
-    done
   }
 
   _generate() {
@@ -131,5 +118,27 @@ BackendPackage() {
 
     logInfo "Launching: ${folderName}"
     npm run launch
+  }
+
+  _install() {
+    [[ ! "${ts_installPackages}" ]] && return
+
+    logInfo "Installing: ${folderName}"
+    logInfo
+
+    for lib in ${@}; do
+      [[ "${lib}" == "${_this}" ]] && break
+      local libPath="$("${lib}.path")"
+      local libFolderName="$("${lib}.folderName")"
+      local libPackageName="$("${lib}.packageName")"
+
+      [[ ! "$(cat package.json | grep "${libPackageName}")" ]] && continue
+
+      local backendDependencyPath="./.dependencies/${libFolderName}"
+      createDir "${backendDependencyPath}"
+      cp -rf "${libPath}/${libFolderName}/${outputDir}"/* "${backendDependencyPath}/"
+    done
+
+    npm install
   }
 }

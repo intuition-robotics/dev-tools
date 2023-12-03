@@ -45,57 +45,6 @@ NodePackage() {
     npm install
   }
 
-  _link() {
-    [[ ! "${ts_link}" ]] && return
-
-    local lib=
-    createFolder "${outputDir}"
-    copyFileToFolder package.json "${outputDir}"
-
-    logDebug "Setting version '${version}' to module: ${folderName}"
-    setVersionName "${version}" "${outputDir}/package.json"
-
-    for lib in ${@}; do
-      [[ "${lib}" == "${_this}" ]] && break
-      local libPackageName="$("${lib}.packageName")"
-
-      [[ ! "$(cat package.json | grep "${libPackageName}")" ]] && continue
-      this.linkLib "${lib}"
-    done
-    return 0
-  }
-
-  _linkLib() {
-    local lib=${1}
-    local libPackageName="$("${lib}.packageName")"
-    local libFolderName="$("${lib}.folderName")"
-    local libVersion="$("${lib}.version")"
-    local libPath="$("${lib}.path")"
-
-    logDebug "Linking ${lib} (${libPackageName}) => ${folderName}"
-    local target="$(pwd)/node_modules/${libPackageName}"
-    local origin="${libPath}/${libFolderName}/${outputDir}"
-
-    createDir "${target}"
-    deleteDir "${target}"
-    logVerbose "ln -s ${origin} ${target}"
-    ln -s "${origin}" "${target}"
-    throwError "Error symlink dependency: ${libPackageName}"
-
-    local moduleVersion="$(string_replace "([0-9]+\\.[0-9]+\\.)[0-9]+" "\10" "${libVersion}")"
-    logVerbose "Updating dependency version to ${libPackageName} => ${moduleVersion}"
-
-    logInfo "libPackageName: ${libPackageName}"
-    logInfo "moduleVersion: ${moduleVersion}"
-    logInfo "outputDir: ${outputDir}"
-    logInfo "pwd: $(pwd)"
-
-    local match="\"${libPackageName}\": \".0\\.0\\.1\""
-    local replacement="\"${libPackageName}\": \"~${moduleVersion}\""
-    file_replaceAll "${match}" "${replacement}" "${outputDir}/package.json" "%"
-    throwError "Error updating version of dependency in package.json"
-  }
-
   _clean() {
     [[ ! "${ts_clean}" ]] && return
 
@@ -230,7 +179,6 @@ NodePackage() {
     this.clean
 
     this.install
-    this.link
     this.generate
     this.compile
     this.lint
