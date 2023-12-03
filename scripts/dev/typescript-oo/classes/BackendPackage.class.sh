@@ -141,4 +141,9 @@ BackendPackage() {
 
     npm install
   }
+
+  _clean() {
+    this.NodePackage.clean
+    deleteDir ".dependencies"
+  }
 }
