@@ -5,6 +5,8 @@ BackendPackage() {
   extends class NodePackage
 
   _deploy() {
+    _copySecrets
+
     [[ ! "$(array_contains "${folderName}" "${ts_deploy[@]}")" ]] && return
 
     logInfo "Deploying: ${folderName}"
@@ -14,9 +16,13 @@ BackendPackage() {
   }
 
   _copySecrets() {
+    [[ ! "${ts_copySecrets}" ]] && return
+
     if [[ ! -e "./src/main/secrets" ]]; then
       return 0
     fi
+
+    bannerInfo "Copy Secrets"
 
     logInfo "Copying Secrets: ${folderName}"
     for i in `cat ./src/main/secrets`; do

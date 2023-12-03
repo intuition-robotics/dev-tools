@@ -151,6 +151,20 @@ Workspace() {
     this.active.forEach assertNoCyclicImport
   }
 
+  _flow() {
+      this.purgeAndClean
+
+      this.installGlobal
+      storeFirebasePath
+      this.setEnvironment
+
+      this.installAndLink
+      this.generate
+
+      this.compile
+      this.lintAndTest
+  }
+
   _purgeAndClean() {
     if [[ ! "${ts_purge}" ]] && [[ ! "${ts_clean}" ]]; then
       return
@@ -164,7 +178,9 @@ Workspace() {
       bannerInfo "Clean"
     fi
 
-    bannerInfo "Purge & Clean"
+    if [[ "${ts_purge}" ]] && [[ "${ts_clean}" ]]; then
+      bannerInfo "Purge & Clean"
+    fi
 
     for _active in "${active[@]}"; do
       _pushd "$("${_active}.path")/$("${_active}.folderName")"
@@ -194,7 +210,9 @@ Workspace() {
       bannerInfo "Install"
     fi
 
-    bannerInfo "Install & Link"
+    if [[ "${ts_installPackages}" ]] && [[ "${ts_link}" ]]; then
+      bannerInfo "Install & Link"
+    fi
 
     for _active in "${active[@]}"; do
       _pushd "$("${_active}.path")/$("${_active}.folderName")"
@@ -240,7 +258,9 @@ Workspace() {
       bannerInfo "Test"
     fi
 
-    bannerInfo "Lint & Test"
+    if [[ "${ts_runTests}" ]] && [[ "${ts_lint}" ]]; then
+      bannerInfo "Lint & Test"
+    fi
 
     for _active in "${active[@]}"; do
       _pushd "$("${_active}.path")/$("${_active}.folderName")"
@@ -257,19 +277,6 @@ Workspace() {
     bannerInfo "Launch"
 
     this.apps.forEach launch
-  }
-
-  _copySecrets() {
-    [[ ! "${ts_copySecrets}" ]] && return
-
-    logInfo
-    bannerInfo "Copy Secrets"
-
-    for _app in "${apps[@]}"; do
-      _pushd "$("${_app}.path")/$("${_app}.folderName")"
-      "${_app}".copySecrets
-      _popd
-    done
   }
 
   _deploy() {

@@ -111,10 +111,6 @@ NodePackage() {
     clearFolder "${outputTestDir}"
   }
 
-  _copySecrets() {
-    return 0
-  }
-
   _compile() {
     _cd src
     local folders=($(listFolders))
