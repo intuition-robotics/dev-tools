@@ -20,15 +20,15 @@ FrontendPackage() {
       # Extract the "target" value
       target_name=$(echo "$target" | grep -o '"target": "[^"]*' | cut -d'"' -f4)
       if [ -n "$target_name" ]; then
-        ${CONST_Firebase} target:apply hosting "$target_name" "$target_name"
+        $(resolveCommand firebase) target:apply hosting "$target_name" "$target_name"
         target_names+=("$target_name")
       fi
     done <<< "$hosting_array"
 
     if [[ ${#target_names[@]} == 1 ]]; then
-      ${CONST_Firebase} deploy --only hosting:"${target_names[0]}"
+      $(resolveCommand firebase) deploy --only hosting:"${target_names[0]}"
     else
-      ${CONST_Firebase} deploy --only hosting
+      $(resolveCommand firebase) deploy --only hosting
     fi
 
     throwWarning "Error while deploying hosting"

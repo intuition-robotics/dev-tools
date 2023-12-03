@@ -10,7 +10,7 @@ BackendPackage() {
     [[ ! "$(array_contains "${folderName}" "${ts_deploy[@]}")" ]] && return
 
     logInfo "Deploying: ${folderName}"
-    ${CONST_Firebase} deploy --only functions
+    $(resolveCommand firebase) deploy --only functions
     throwWarning "Error while deploying functions"
     logInfo "Deployed: ${folderName}"
   }
@@ -72,11 +72,11 @@ BackendPackage() {
     if [ -f ./src/main/configs/default.json ]; then
       rm ./src/main/configs/default.json
     fi
-    ${CONST_Firebase} database:get /_config/default >> ./src/main/configs/default.json
+    $(resolveCommand firebase) database:get /_config/default >> ./src/main/configs/default.json
 
-    res=$(${CONST_Firebase} database:get /_config/${envType})
+    res=$($(resolveCommand firebase) database:get /_config/${envType})
     if [[ ${res} =~ null ]] && [ ! -z $fallbackEnv ]; then
-      res=$(${CONST_Firebase} database:get /_config/${fallbackEnv})
+      res=$($(resolveCommand firebase) database:get /_config/${fallbackEnv})
     fi
 
     if [[ ${res} =~ null ]]; then
