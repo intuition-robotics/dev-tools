@@ -36,6 +36,12 @@ NodePackage() {
   _install() {
     [[ ! "${ts_installPackages}" ]] && [[ ! "${ts_updatePackages}" ]] && return
 
+#    createFolder "${outputDir}"
+#    copyFileToFolder package.json "${outputDir}"
+#
+#    logDebug "Setting version '${version}' to module: ${folderName}"
+#    setVersionName "${version}" "${outputDir}/package.json"
+
     if [[ "${ts_updatePackages}" ]]; then
       logInfo "Updating: ${folderName}"
       npm update

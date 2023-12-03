@@ -121,7 +121,7 @@ BackendPackage() {
 
       local backendDependencyPath="./.dependencies/${libFolderName}"
       createDir "${backendDependencyPath}"
-      ln -s "${libPath}/${libFolderName}/${outputDir}"/* "${backendDependencyPath}/"
+      cp -rf "${libPath}/${libFolderName}/${outputDir}"/* "${backendDependencyPath}/"
     done
 
     this.NodePackage.install ${@}

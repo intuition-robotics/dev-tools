@@ -6,6 +6,7 @@
       "es6",
       "es7"
     ],
+    "resolveJsonModule": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "noUnusedLocals": true,
