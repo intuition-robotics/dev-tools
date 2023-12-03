@@ -162,109 +162,11 @@ Workspace() {
     done
   }
 
-  _purgeAndClean() {
-    if [[ ! "${ts_purge}" ]] && [[ ! "${ts_clean}" ]]; then
-      return
-    fi
-
-    if [[ ! "${ts_clean}" ]]; then
-      bannerInfo "Purge"
-    fi
-
-    if [[ ! "${ts_purge}" ]]; then
-      bannerInfo "Clean"
-    fi
-
-    if [[ "${ts_purge}" ]] && [[ "${ts_clean}" ]]; then
-      bannerInfo "Purge & Clean"
-    fi
-
-    for _active in "${active[@]}"; do
-      _pushd "$("${_active}.path")/$("${_active}.folderName")"
-      "${_active}".purge
-      "${_active}".clean
-      _popd
-    done
-  }
-
   _installGlobal() {
     if [[ "${ts_installGlobals}" ]]; then
       logInfo "Installing global packages..."
       npm i -g typescript@4.1 eslint@latest tslint@latest firebase-tools@latest sort-package-json@latest sort-json@latest tsc-watch@latest
     fi
-  }
-
-  _installAndLink() {
-    if [[ ! "${ts_installPackages}" ]] && [[ ! "${ts_link}" ]]; then
-      return
-    fi
-
-    if [[ ! "${ts_installPackages}" ]]; then
-      bannerInfo "Link"
-    fi
-
-    if [[ ! "${ts_link}" ]]; then
-      bannerInfo "Install"
-    fi
-
-    if [[ "${ts_installPackages}" ]] && [[ "${ts_link}" ]]; then
-      bannerInfo "Install & Link"
-    fi
-
-    for _active in "${active[@]}"; do
-      _pushd "$("${_active}.path")/$("${_active}.folderName")"
-      "${_active}.install" "${allLibs[@]}"
-      "${_active}.link" "${allLibs[@]}"
-      _popd
-    done
-  }
-
-  _compile() {
-    [[ ! "${ts_compile}" ]] && return
-
-    logInfo
-    bannerInfo "Compile"
-
-    for _active in "${active[@]}"; do
-      _pushd "$("${_active}.path")/$("${_active}.folderName")"
-      "${_active}.compile" "${allLibs[@]}"
-      _popd
-    done
-
-    [[ "${ts_watch}" ]] && deleteFile "${CONST_BuildWatchFile}"
-    for lib in "${allLibs[@]}"; do
-      local length=$("${lib}.newWatchIds.length")
-      ((length == 0)) && continue
-      for ((i = 0; i < length; i++)); do
-        local var="${lib}_newWatchIds[${i}]"
-        echo -e "${!var}" >> "${CONST_BuildWatchFile}"
-      done
-    done
-  }
-
-  _lintAndTest() {
-    if [[ ! "${ts_runTests}" ]] && [[ ! "${ts_lint}" ]]; then
-      return
-    fi
-
-    if [[ ! "${ts_runTests}" ]]; then
-      bannerInfo "Lint"
-    fi
-
-    if [[ ! "${ts_lint}" ]]; then
-      bannerInfo "Test"
-    fi
-
-    if [[ "${ts_runTests}" ]] && [[ "${ts_lint}" ]]; then
-      bannerInfo "Lint & Test"
-    fi
-
-    for _active in "${active[@]}"; do
-      _pushd "$("${_active}.path")/$("${_active}.folderName")"
-      "${_active}".lint
-      "${_active}".test
-      _popd
-    done
   }
 
   _launch() {
@@ -317,19 +219,6 @@ Workspace() {
     throwError "Error pushing promotion tag"
 
     gitNoConflictsAddCommitPush "Thunderstorm" "$(gitGetCurrentBranch)" "published version v${thunderstormVersion}"
-  }
-
-  _generate() {
-    ((${#ts_generate[@]} == 0)) && return
-
-    logInfo
-    bannerInfo "Generate"
-
-    for _app in "${apps[@]}"; do
-      _pushd "$("${_app}.path")/$("${_app}.folderName")"
-      "${_app}".generate
-      _popd
-    done
   }
 
   _toLog() {
