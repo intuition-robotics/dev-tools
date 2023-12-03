@@ -26,85 +26,76 @@ CONST_RunningFolder="$(folder_getRunningPath 1)"
 setTranspilerOutput ".trash/bai"
 addTranspilerClassPath "${CONST_RunningFolder}/classes"
 
-installAndUseNvmIfNeeded
-storeFirebasePath
+buildWorkspace() {
 
-new Workspace workspace
-workspace.appVersion = "${appVersion}"
-workspace.prepare
+  installAndUseNvmIfNeeded
+  storeFirebasePath
 
-[[ -e "${CONST_BuildWatchFile}" ]] && readarray -t activeWatches < "${CONST_BuildWatchFile}"
+  new Workspace workspace
+  workspace.appVersion = "${appVersion}"
+  workspace.prepare
 
-local _tsLibs=()
-local _projectLibs=()
-local _apps=()
+  local _tsLibs=()
+  local _projectLibs=()
+  local _apps=()
 
-local _ts_runTests=()
-local _allLibs=()
+  local _ts_runTests=()
+  local _allLibs=()
 
-createPackages() {
-  local className="${1}"
-  local version="${2}"
-  local libs=(${@:3})
-  local ref
+  createPackages() {
+    local className="${1}"
+    local version="${2}"
+    local libs=(${@:3})
+    local ref
 
-  for lib in "${libs[@]}"; do
-    [[ ! -e "${lib}" ]] && continue
-    [[ ! -e "${lib}/package.json" ]] && continue
+    for lib in "${libs[@]}"; do
+      [[ ! -e "${lib}" ]] && continue
+      [[ ! -e "${lib}/package.json" ]] && continue
 
-    _logWarning "processing ${lib}"
-    local watchProcessIds=()
-    for watchLine in "${activeWatches[@]}"; do
-      [[ ! "${watchLine}" ]] && continue
-      [[ ! "${watchLine}" =~ ^${lib} ]] && continue
+      _logWarning "processing ${lib}"
+      ref=$(string_replaceAll "-" "_" "${lib}")
 
-      watchProcessIds+=("${watchLine}")
+      _logWarning "new ${className} ${ref}"
+      new "${className}" "${ref}"
+      "${ref}".folderName = "${lib}"
+      "${ref}".path = "$(pwd)"
+      "${ref}".prepare
+      "${ref}".outputDir = "${outputDir}"
+      "${ref}".outputTestDir = "${outputTestDir}"
+      "${ref}".version = "${version}"
+
+      [[ "$(array_contains "${lib}" "${tsLibs[@]}")" ]] && _tsLibs+=(${ref})
+      [[ "$(array_contains "${lib}" "${projectLibs[@]}")" ]] && _projectLibs+=(${ref})
+      [[ "$(array_contains "${lib}" "${executableApps[@]}" "${backendApps[@]}" "${frontendApps[@]}")" ]] && _apps+=(${ref})
+
+      [[ "$(array_contains "${lib}" "${ts_activeLibs[@]}")" ]] && _activeLibs+=(${ref})
+      _allLibs+=(${ref})
     done
-    ref=$(string_replaceAll "-" "_" "${lib}")
+  }
 
-    _logWarning "new ${className} ${ref}"
-    new "${className}" "${ref}"
-    "${ref}".folderName = "${lib}"
-    "${ref}".path = "$(pwd)"
-    "${ref}".prepare
-    "${ref}".outputDir = "${outputDir}"
-    "${ref}".outputTestDir = "${outputTestDir}"
-    "${ref}".version = "${version}"
-    "${ref}".watchIds = "${watchProcessIds[@]}"
+  [[ "${ThunderstormHome}" ]] && [[ "${ts_linkThunderstorm}" ]] && _pushd "${ThunderstormHome}"
+  createPackages NodePackage "$(workspace.thunderstormVersion)" "${tsLibs[@]}"
+  [[ "${ThunderstormHome}" ]] && [[ "${ts_linkThunderstorm}" ]] && _popd
 
-    [[ "$(array_contains "${lib}" "${tsLibs[@]}")" ]] && _tsLibs+=(${ref})
-    [[ "$(array_contains "${lib}" "${projectLibs[@]}")" ]] && _projectLibs+=(${ref})
-    [[ "$(array_contains "${lib}" "${executableApps[@]}" "${backendApps[@]}" "${frontendApps[@]}")" ]] && _apps+=(${ref})
+  createPackages NodePackage "$(workspace.appVersion)" "${projectLibs[@]}"
+  createPackages ExecutablePackage "$(workspace.appVersion)" "${executableApps[@]}"
+  createPackages FrontendPackage "$(workspace.appVersion)" "${frontendApps[@]}"
+  createPackages BackendPackage "$(workspace.appVersion)" "${backendApps[@]}"
 
-    [[ "$(array_contains "${lib}" "${ts_activeLibs[@]}")" ]] && _activeLibs+=(${ref})
-    _allLibs+=(${ref})
-  done
+  ((${#_activeLibs[@]} == 0)) && _activeLibs=(${_allLibs[@]})
+
+  workspace.tsLibs = "${_tsLibs[@]}"
+  workspace.projectLibs = "${_projectLibs[@]}"
+  workspace.active = "${_activeLibs[@]}"
+  workspace.apps = "${_apps[@]}"
+  workspace.allLibs = "${_allLibs[@]}"
+
+  workspace.flow
+  workspace.publish
+  workspace.launch
+  workspace.deploy
+
 }
 
-[[ "${ThunderstormHome}" ]] && [[ "${ts_linkThunderstorm}" ]] && _pushd "${ThunderstormHome}"
-createPackages NodePackage "$(workspace.thunderstormVersion)" "${tsLibs[@]}"
-[[ "${ThunderstormHome}" ]] && [[ "${ts_linkThunderstorm}" ]] && _popd
-
-createPackages NodePackage "$(workspace.appVersion)" "${projectLibs[@]}"
-createPackages ExecutablePackage "$(workspace.appVersion)" "${executableApps[@]}"
-createPackages FrontendPackage "$(workspace.appVersion)" "${frontendApps[@]}"
-createPackages BackendPackage "$(workspace.appVersion)" "${backendApps[@]}"
-
-((${#_activeLibs[@]} == 0)) && _activeLibs=(${_allLibs[@]})
-
-workspace.tsLibs = "${_tsLibs[@]}"
-workspace.projectLibs = "${_projectLibs[@]}"
-workspace.active = "${_activeLibs[@]}"
-workspace.apps = "${_apps[@]}"
-workspace.allLibs = "${_allLibs[@]}"
-
-#  breakpoint "before running workspace"
-
-#  workspace.toLog
-
-workspace.flow
-
-workspace.publish
-workspace.launch
-workspace.deploy
+buildWorkspace
 

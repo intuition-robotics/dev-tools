@@ -3,14 +3,11 @@
 NodePackage() {
 
   declare path
-  declare watch
   declare folderName
   declare packageName
   declare version
   declare outputDir
   declare outputTestDir
-  declare -a watchIds
-  declare -a newWatchIds
 
   _prepare() {
     packageName="$(getJsonValueForKey "${folderName}/package.json" "name")"

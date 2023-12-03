@@ -8,7 +8,6 @@ ts_clean=
 ts_installGlobals=
 ts_installPackages=
 ts_compile=true
-ts_watch=
 ts_linkThunderstorm=
 ts_lint=
 ts_runTests=
@@ -49,7 +48,6 @@ params=(
   ts_installPackages
   ts_updatePackages
   ts_compile
-  ts_watch
   ts_linkThunderstorm
   ts_lint
   ts_runTests
@@ -209,14 +207,6 @@ extractParams() {
     "--check-imports" | "-ci")
       #DOC: Will check for circular import in files...
       checkCircularImports=true
-      ;;
-
-    "--watch" | "-w")
-      # FUTURE: will build and listen for changes in the libraries
-      ts_watch=true
-      ts_compile=true
-      CONST_BuildWatchFile="$(pwd)/.trash/watch.txt"
-
       ;;
 
       #        ==== TEST ====
