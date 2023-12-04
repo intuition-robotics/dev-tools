@@ -5,8 +5,6 @@ BackendPackage() {
   extends class NodePackage
 
   _deploy() {
-    _copySecrets
-
     [[ ! "$(array_contains "${folderName}" "${ts_deploy[@]}")" ]] && return
 
     logInfo "Deploying: ${folderName}"
@@ -90,6 +88,8 @@ BackendPackage() {
   }
 
   _compile() {
+    this.copySecrets
+
     [[ ! "${ts_compile}" ]] && return
 
     logInfo "Compiling: ${folderName}"
