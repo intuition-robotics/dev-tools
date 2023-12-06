@@ -36,11 +36,11 @@ NodePackage() {
   _install() {
     [[ ! "${ts_installPackages}" ]] && [[ ! "${ts_updatePackages}" ]] && return
 
-#    createFolder "${outputDir}"
-#    copyFileToFolder package.json "${outputDir}"
-#
-#    logDebug "Setting version '${version}' to module: ${folderName}"
-#    setVersionName "${version}" "${outputDir}/package.json"
+    createFolder "${outputDir}"
+    copyFileToFolder package.json "${outputDir}"
+
+    logDebug "Setting version '${version}' to module: ${folderName}"
+    setVersionName "${version}" "${outputDir}/package.json"
 
     if [[ "${ts_updatePackages}" ]]; then
       logInfo "Updating: ${folderName}"
@@ -74,6 +74,7 @@ NodePackage() {
     _cd..
 
     for folder in "${folders[@]}"; do
+      logInfo "Compiling: ${folderName}/${folder}"
       tsc -p "./src/${folder}/tsconfig.json" --rootDir "./src/${folder}" --outDir "${outputDir}" ${compilerFlags[@]}
     done
     throwWarning "Error compiling: ${module}/${folder}"
