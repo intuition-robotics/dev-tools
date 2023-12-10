@@ -108,34 +108,10 @@ NodePackage() {
   }
 
   _compile() {
-    _cd src
-    local folders=($(listFolders))
-    _cd..
+    logInfo "Compiling: ${folderName}"
 
-    for folder in "${folders[@]}"; do
-      [[ "${folder}" == "test" ]] && continue
-      logInfo "Compiling($(tsc -v)): ${folderName}/${folder}"
-      if [[ "${ts_watch}" ]]; then
-
-        local parts=
-        for watchLine in "${watchIds[@]}"; do
-          parts=(${watchLine[@]})
-          [[ "${parts[1]}" == "${folder}" ]] && break
-        done
-
-        [[ "${parts[2]}" ]] && execute "pkill -P ${parts[2]}"
-
-        tsc-watch -p "./src/${folder}/tsconfig.json" --rootDir "./src/${folder}" --outDir "${outputDir}" ${compilerFlags[@]} --onSuccess "bash ../relaunch-backend.sh" &
-
-        local _pid="${folderName} ${folder} $!"
-        logInfo "${_pid}"
-        newWatchIds+=("${_pid}")
-      else
-        tsc -p "./src/${folder}/tsconfig.json" --rootDir "./src/${folder}" --outDir "${outputDir}" ${compilerFlags[@]}
-        throwWarning "Error compiling: ${module}/${folder}"
-        # figure out the rest of the dirs...
-      fi
-    done
+    npm run build
+    throwWarning "Error compiling: ${folderName}"
   }
 
   _lint() {
