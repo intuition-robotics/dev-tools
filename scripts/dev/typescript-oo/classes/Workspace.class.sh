@@ -67,6 +67,11 @@ Workspace() {
 
     gitAssertBranch "${allowedBranchesForPromotion[@]}"
     gitFetchRepo
+
+    logDebug "Git Status:"
+    git status
+    logDebug
+
     gitAssertRepoClean
     gitAssertNoCommitsToPull
   }
