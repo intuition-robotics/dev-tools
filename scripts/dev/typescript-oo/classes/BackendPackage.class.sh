@@ -85,6 +85,7 @@ BackendPackage() {
 
   _compile() {
     logInfo "Compiling: ${folderName}"
+    ls node-modules/@app/ir-q-app-common/app-backend/modules/
 
     npm run build
     throwWarning "Error compiling: ${folderName}"
