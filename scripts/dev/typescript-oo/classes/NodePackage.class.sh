@@ -69,15 +69,10 @@ NodePackage() {
   _compile() {
     [[ ! "${ts_compile}" ]] && return
 
-    _cd src
-    local folders=($(listFolders))
-    _cd..
+    logInfo "Compiling: ${folderName}"
 
-    for folder in "${folders[@]}"; do
-      logInfo "Compiling: ${folderName}/${folder}"
-      tsc -p "./src/${folder}/tsconfig.json" --rootDir "./src/${folder}" --outDir "${outputDir}" ${compilerFlags[@]}
-    done
-    throwWarning "Error compiling: ${module}/${folder}"
+    npm run build
+    throwWarning "Error compiling: ${folderName}"
   }
 
   _lint() {
