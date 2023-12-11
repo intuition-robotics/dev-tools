@@ -67,7 +67,7 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
         checkout({
             getModule(SlackModule.class).setOnSuccess(getRepo().getChangeLog().toSlackMessage())
         })
-        addStage("Deploy & Compile", { this.installAndBuild() })
+        addStage("Install & Build", { this.installAndBuild() })
 //		test()
 
         deploy()
