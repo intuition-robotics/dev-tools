@@ -169,8 +169,7 @@ Workspace() {
 
   _installGlobal() {
     if [[ "${ts_installGlobals}" ]]; then
-      logInfo "Installing global packages..."
-      npm i --location=global tslint@latest firebase-tools@latest
+      logInfo "Not Installing global packages...No need"
     fi
   }
 
