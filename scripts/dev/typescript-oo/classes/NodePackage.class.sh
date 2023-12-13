@@ -80,7 +80,7 @@ NodePackage() {
 
     logInfo "Linting: ${folderName}"
     npm run lint
-    throwError "Error while ES linting: ${module}/${folder}"
+    throwError "Error while linting: ${folderName}"
   }
 
   _test() {
