@@ -322,17 +322,36 @@ gitAssertNoCommitsToPull() {
 }
 
 gitAssertRepoClean() {
+  if [[ $(hasConflicts) ]] ; then
+    echo "Repo has conflicts... Repo MUST be clean"
+  fi
+  if [[ $(hasUntrackedFiles) ]] ; then
+    echo "Repo has untracked files... Repo MUST be clean"
+  fi
+  if [[ $(hasChanged) ]] ; then
+    echo "Repo has changes... Repo MUST be clean"
+  fi
+
   if [[ $(hasConflicts) ]] || [[ $(hasUntrackedFiles) ]] || [[ $(hasChanged) ]]; then
     bash ./dev-tools/scripts/git/git-status.sh -a
     throwError "Repo has changes... Repo MUST be clean" 2
   fi
 }
 
+match() {
+  for i in "${@:2}"; do
+    if [[ "${1}" =~ "${i}"  ]]; then
+      echo "true"
+      return
+    fi
+  done
+}
+
 gitAssertBranch() {
   local assertionBranches=(${@})
 
   local branch=$(gitGetCurrentBranch)
-  if [[ $(array_contains ${branch} "${assertionBranches[@]}") ]]; then
+  if [[ $(match ${branch} "${assertionBranches[@]}") ]]; then
     return
   fi
 

@@ -8,6 +8,7 @@ allowedBranchesForPromotion=(
   staging
   dev
   move-to-ir
+  feature/
 )
 
 tsLibs=(
