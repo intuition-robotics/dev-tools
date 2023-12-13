@@ -162,24 +162,10 @@ NodePackage() {
   }
 
   _lint() {
-    _cd src
-    local folders=($(listFolders))
-    _cd..
+    logInfo "Linting: ${folderName}"
 
-    for folder in "${folders[@]}"; do
-      [[ "${folder}" == "test" ]] && continue
-
-      if [[ -e ".eslintrc.js" ]]; then
-        logInfo "ES Linting: ${folderName}/${folder}"
-        eslint --ext .ts --ext .tsx "./src/${folder}"
-        throwError "Error while ES linting: ${module}/${folder}"
-
-      elif [[ -e "tslint.json" ]]; then
-        logInfo "Linting: ${folderName}/${folder}"
-        tslint --project "./src/${folder}/tsconfig.json"
-        throwError "Error while linting: ${module}/${folder}"
-      fi
-    done
+    npm run lint
+    throwWarning "Error linting: ${folderName}"
   }
 
   _test() {

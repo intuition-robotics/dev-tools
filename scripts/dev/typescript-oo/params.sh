@@ -90,11 +90,6 @@ extractParams() {
     "--print-env")
       #DOC: Will print the current versions of the important tools
 
-      printNpmPackageVersion typescript
-      printNpmPackageVersion tslint
-      printNpmPackageVersion firebase-tools
-      printNpmPackageVersion sort-package-json
-
       logDebug "node version: $(node -v)"
       logDebug "npm version: $(npm -v)"
       logDebug "bash version: $(getBashVersion)"
