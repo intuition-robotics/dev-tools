@@ -158,6 +158,7 @@ NodePackage() {
     logInfo "Compiling: ${folderName}/main"
 
     npm run build
+    throwWarning "Error compiling: ${folderName}"
   }
 
   _lint() {
