@@ -338,11 +338,20 @@ gitAssertRepoClean() {
   fi
 }
 
+match() {
+  for i in "${@:2}"; do
+    if [[ "${1}" =~ "${i}"  ]]; then
+      echo "true"
+      return
+    fi
+  done
+}
+
 gitAssertBranch() {
   local assertionBranches=(${@})
 
   local branch=$(gitGetCurrentBranch)
-  if [[ $(array_contains ${branch} "${assertionBranches[@]}") ]]; then
+  if [[ $(match ${branch} "${assertionBranches[@]}") ]]; then
     return
   fi
 
