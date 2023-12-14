@@ -149,12 +149,6 @@ extractParams() {
       ts_compile=true
       ;;
 
-    "--init")
-      #DOC: To run the first time you clone the project
-      ts_installGlobals=true
-      ts_installPackages=true
-      ;;
-
     "--update" | "-u")
       #DOC: Will run 'npm update' in all project packages
 

@@ -77,6 +77,6 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     }
 
     void installAndBuild()  {
-        _sh("bash build-and-install.sh --set-env=${this.env} -fe=${this.fallEnv} --init --install --debug")
+        _sh("bash build-and-install.sh --set-env=${this.env} -fe=${this.fallEnv} --lint --install --debug")
     }
 }
