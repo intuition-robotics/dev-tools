@@ -36,8 +36,12 @@ FrontendPackage() {
   }
 
   _setEnvironment() {
+    storeFirebasePath
+
+    [[ ! "${ts_setEnv}" ]] && return
+
     #    TODO: iterate on all source folders
-    logDebug "Setting ${folderName} env: ${envType}"
+    logInfo "Setting ${folderName} env: ${envType}"
     copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
   }
 

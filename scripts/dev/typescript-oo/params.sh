@@ -46,6 +46,7 @@ params=(
   ts_clean
   ts_installGlobals
   ts_installPackages
+  ts_setEnv
   ts_updatePackages
   ts_compile
   ts_linkThunderstorm
@@ -134,6 +135,7 @@ extractParams() {
     "--set-env="* | "-se="*)
       #DOC: Will set the .config-${environment}.json as the current .config.json and prepare it as base 64 for local usage
       #PARAM=environment
+      ts_setEnv=true
       envType=$(regexParam "--set-env|-se" "${paramValue}")
       ;;
 
