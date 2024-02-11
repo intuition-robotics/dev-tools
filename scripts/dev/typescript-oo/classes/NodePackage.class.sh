@@ -85,32 +85,9 @@ NodePackage() {
 
   _test() {
     [[ ! "${ts_runTests}" ]] && return
-    [[ ! "${testServiceAccount}" ]] && throwError "MUST specify path to a test service account" 2
 
-    [[ ! -e "./src/test/tsconfig.json" ]] && logVerbose "./src/test/tsconfig.json was not found... skipping test phase" && return 0
-    [[ "${testServiceAccount}" ]] && [[ ! -e "${testServiceAccount}" ]] && throwError "Service account cannot be resolved from path: ${testServiceAccount}" 2
-
-    export GOOGLE_APPLICATION_CREDENTIALS="${testServiceAccount}"
     logInfo "Testing: ${folderName}"
-
-    deleteDir "${outputTestDir}"
-    tsc -p ./src/test/tsconfig.json --outDir "${outputTestDir}"
-    throwError "Error while compiling tests in:  ${folderName}"
-
-    copyFileToFolder package.json "${outputTestDir}/test"
-    throwError "Error while compiling tests in:  ${folderName}"
-
-    logInfo "${folderName} - Linting tests..."
-    tslint --project ./src/test/tsconfig.json
-    throwError "Error while linting tests in:  ${folderName}"
-
-    logInfo "${folderName} - Running tests..."
-
-    local testsToRun=()
-    for testToRun in "${ts_testsToRun[@]}"; do
-      testsToRun+=("--test=${testToRun}")
-    done
-    node "${outputTestDir}/test/test" "--service-account=${testServiceAccount}" "${testsToRun[@]}"
+    npm run test
     throwError "Error while running tests in:  ${folderName}"
   }
 
