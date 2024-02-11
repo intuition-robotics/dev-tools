@@ -29,6 +29,7 @@ addTranspilerClassPath "${CONST_RunningFolder}/classes"
 buildWorkspace() {
 
   installAndUseNvmIfNeeded
+  storeFirebasePath
 
   new Workspace workspace
   workspace.appVersion = "${appVersion}"

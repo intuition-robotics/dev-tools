@@ -113,7 +113,7 @@ Workspace() {
     assertRepoIsClean
   }
 
-  _setEnvironmentGlobal() {
+  _setEnvironment() {
     if [[ ! "${envType}" ]]; then
       [[ ! -e "${CONST_TS_ENV_FILE}" ]] && throwError "Please run ${0} --set-env=<env>" 2
       envType=$(cat ${CONST_TS_ENV_FILE} | grep -E "env=" | sed -E "s/^env=\"(.*)\"$/\1/")
@@ -125,12 +125,19 @@ Workspace() {
     [[ "${envType}" ]] && [[ "${envType}" != "dev" ]] && compilerFlags+=(--sourceMap false)
 
     logInfo
-    bannerInfo "Set Environment Global: ${envType}"
+    bannerInfo "Set Environment: ${envType}"
     [[ "${fallbackEnv}" ]] && logWarning " -- Fallback env: ${fallbackEnv}"
+
+    $(resolveCommand firebase) login
 
     copyConfigFile "./.config/firebase-ENV_TYPE.json" "firebase.json" true "${envType}" "${fallbackEnv}"
     copyConfigFile "./.config/.firebaserc-ENV_TYPE" ".firebaserc" true "${envType}" "${fallbackEnv}"
 
+    local firebaseProject="$(getJsonValueForKey .firebaserc default)"
+    verifyFirebaseProjectIsAccessible "${firebaseProject}"
+    $(resolveCommand firebase) use "${firebaseProject}"
+
+    this.apps.forEach setEnvironment
     echo "env=\"${envType}\"" > "${CONST_TS_ENV_FILE}"
     [[ "${fallbackEnv}" ]] && echo "env=\"${fallbackEnv}\"" >> "${CONST_TS_ENV_FILE}"
   }
@@ -146,14 +153,13 @@ Workspace() {
 
   _flow() {
     this.installGlobal
-    this.setEnvironmentGlobal
+    this.setEnvironment
 
     for _active in "${active[@]}"; do
       _pushd "$("${_active}.path")/$("${_active}.folderName")"
       "${_active}".purge
       "${_active}".clean
       "${_active}".install "${allLibs[@]}"
-      "${_active}".setEnvironment
       "${_active}".compile
       "${_active}".lint
       "${_active}".test

@@ -54,17 +54,8 @@ BackendPackage() {
   }
 
   _setEnvironment() {
-    storeFirebasePath
-
-    [[ ! "${ts_setEnv}" ]] && return
-
-    logInfo "Setting ${folderName} env: ${envType}"
-
-    local firebaseProject="$(getJsonValueForKey ../.firebaserc default)"
-    verifyFirebaseProjectIsAccessible "${firebaseProject}"
-    $(resolveCommand firebase) use "${firebaseProject}"
-
     #    TODO: iterate on all source folders
+    logDebug "Setting ${folderName} env: ${envType}"
     copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
 
     copyConfigFromFirebase

@@ -136,8 +136,4 @@ NodePackage() {
   _toLog() {
     logDebug "${folderName}: ${packageName}"
   }
-
-  _setEnvironment() {
-    return
-  }
 }
