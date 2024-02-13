@@ -1,6 +1,5 @@
 #!/bin/bash
 CONST_DOT_ENV_FILE=".env"
-FIREBASE_EXEC_PATH="node ./node_modules/firebase-tools/lib/bin/firebase.js"
 
 BackendPackage() {
   extends class NodePackage
@@ -20,12 +19,12 @@ BackendPackage() {
       # Extract the "target" value
       target_name=$(echo "$target" | grep -o '"target": "[^"]*' | cut -d'"' -f4)
       if [ -n "$target_name" ]; then
-        ${FIREBASE_EXEC_PATH} target:apply hosting "$target_name" "$target_name"
+        $(resolveCommand firebase) target:apply hosting "$target_name" "$target_name"
         target_names+=("$target_name")
       fi
     done <<< "$hosting_array"
 
-    ${FIREBASE_EXEC_PATH} deploy
+    $(resolveCommand firebase) deploy
     throwError "Error while deploying app"
   }
 
@@ -76,7 +75,7 @@ BackendPackage() {
 
     local firebaseProject="$(getJsonValueForKey ../.firebaserc default)"
     this.verifyFirebaseProjectIsAccessible "${firebaseProject}"
-    ${FIREBASE_EXEC_PATH} use "${firebaseProject}"
+    $(resolveCommand firebase) use "${firebaseProject}"
 
     #    TODO: iterate on all source folders
     copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
@@ -90,11 +89,11 @@ BackendPackage() {
      local firebaseProject=${1}
 
      logDebug "Verifying You are logged in to firebase tools...'"
-     [[ "${USER,,}" != "jenkins" ]] && ${FIREBASE_EXEC_PATH} login:ci
+     [[ "${USER,,}" != "jenkins" ]] && $$(resolveCommand firebase) login:ci
      logDebug
 
      logDebug "Verifying access to firebase project: '${firebaseProject}'"
-     local output=$(${FIREBASE_EXEC_PATH} projects:list | grep "${firebaseProject}" 2>&1)
+     local output=$($(resolveCommand firebase) projects:list | grep "${firebaseProject}" 2>&1)
      if [[ "${output}" =~ "Command requires authentication" ]]; then
        logError "    User not logged in"
        return 2
@@ -115,11 +114,11 @@ BackendPackage() {
     if [ -f ./src/main/configs/default.json ]; then
       rm ./src/main/configs/default.json
     fi
-    ${FIREBASE_EXEC_PATH} database:get /_config/default >> ./src/main/configs/default.json
+    $(resolveCommand firebase) database:get /_config/default >> ./src/main/configs/default.json
 
-    res=$(${FIREBASE_EXEC_PATH} database:get /_config/${envType})
+    res=$($(resolveCommand firebase) database:get /_config/${envType})
     if [[ ${res} =~ null ]] && [ ! -z $fallbackEnv ]; then
-      res=$(${FIREBASE_EXEC_PATH} database:get /_config/${fallbackEnv})
+      res=$($(resolveCommand firebase) database:get /_config/${fallbackEnv})
     fi
 
     if [[ ${res} =~ null ]]; then
