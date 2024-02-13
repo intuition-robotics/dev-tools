@@ -1,5 +1,6 @@
 #!/bin/bash
 CONST_DOT_ENV_FILE=".env"
+FIREBASE_EXEC_PATH="node ./node_modules/firebase-tools/lib/bin/firebase.js"
 
 BackendPackage() {
   extends class NodePackage
@@ -7,10 +8,25 @@ BackendPackage() {
   _deploy() {
     [[ ! "$(array_contains "${folderName}" "${ts_deploy[@]}")" ]] && return
 
-    logInfo "Deploying: ${folderName}"
-    $(resolveCommand firebase) deploy --only functions
-    throwWarning "Error while deploying functions"
-    logInfo "Deployed: ${folderName}"
+    firebase_json=$(<../firebase.js.json)
+    hosting_array=$(echo "$firebase_json" | sed -n '/"hosting": \[/,/^\s*\],$/p')
+
+    local target_names=()
+
+    while read -r -d '}' target; do
+      public_directory=$(echo "$target" | grep -o '"public": "[^"]*' | cut -d'"' -f4)
+      [[ ! "$(array_contains "$(echo "$public_directory" | cut -d'/' -f1)" "${ts_deploy[@]}")" ]] && continue
+
+      # Extract the "target" value
+      target_name=$(echo "$target" | grep -o '"target": "[^"]*' | cut -d'"' -f4)
+      if [ -n "$target_name" ]; then
+        ${FIREBASE_EXEC_PATH} target:apply hosting "$target_name" "$target_name"
+        target_names+=("$target_name")
+      fi
+    done <<< "$hosting_array"
+
+    ${FIREBASE_EXEC_PATH} deploy
+    throwError "Error while deploying app"
   }
 
   _copySecrets() {
@@ -54,15 +70,13 @@ BackendPackage() {
   }
 
   _setEnvironment() {
-    storeFirebasePath
-
     [[ ! "${ts_setEnv}" ]] && return
 
     logInfo "Setting ${folderName} env: ${envType}"
 
     local firebaseProject="$(getJsonValueForKey ../.firebaserc default)"
-    verifyFirebaseProjectIsAccessible "${firebaseProject}"
-    $(resolveCommand firebase) use "${firebaseProject}"
+    this.verifyFirebaseProjectIsAccessible "${firebaseProject}"
+    ${FIREBASE_EXEC_PATH} use "${firebaseProject}"
 
     #    TODO: iterate on all source folders
     copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
@@ -72,6 +86,28 @@ BackendPackage() {
     copyConfigFile "./.config/secrets-ENV_TYPE" "./src/main/secrets" true "${envType}" "${fallbackEnv}"
   }
 
+  _verifyFirebaseProjectIsAccessible() {
+     local firebaseProject=${1}
+
+     logDebug "Verifying You are logged in to firebase tools...'"
+     [[ "${USER,,}" != "jenkins" ]] && ${FIREBASE_EXEC_PATH} login:ci
+     logDebug
+
+     logDebug "Verifying access to firebase project: '${firebaseProject}'"
+     local output=$(${FIREBASE_EXEC_PATH} projects:list | grep "${firebaseProject}" 2>&1)
+     if [[ "${output}" =~ "Command requires authentication" ]]; then
+       logError "    User not logged in"
+       return 2
+     fi
+
+     # shellcheck disable=SC2076
+     if [[ ! "${output}" =~ "${firebaseProject}" ]]; then
+       logError "    No access found"
+       return 1
+     fi
+     return 0
+   }
+
   copyConfigFromFirebase() {
     if [ ! -d ./src/main/configs ]; then
       mkdir ./src/main/configs
@@ -79,11 +115,11 @@ BackendPackage() {
     if [ -f ./src/main/configs/default.json ]; then
       rm ./src/main/configs/default.json
     fi
-    $(resolveCommand firebase) database:get /_config/default >> ./src/main/configs/default.json
+    ${FIREBASE_EXEC_PATH} database:get /_config/default >> ./src/main/configs/default.json
 
-    res=$($(resolveCommand firebase) database:get /_config/${envType})
+    res=$(${FIREBASE_EXEC_PATH} database:get /_config/${envType})
     if [[ ${res} =~ null ]] && [ ! -z $fallbackEnv ]; then
-      res=$($(resolveCommand firebase) database:get /_config/${fallbackEnv})
+      res=$(${FIREBASE_EXEC_PATH} database:get /_config/${fallbackEnv})
     fi
 
     if [[ ${res} =~ null ]]; then

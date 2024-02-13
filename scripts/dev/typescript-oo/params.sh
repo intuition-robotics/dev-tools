@@ -220,7 +220,7 @@ extractParams() {
 
     "--account="* | "-a="*)
       #DOC: Run the tests in all the project packages
-      #PARAM=path-to-firebase-service-account
+      #PARAM=path-to-firebase.js-service-account
 
       testServiceAccount=$(regexParam "--account|-a" "${paramValue}")
       ts_runTests=true
