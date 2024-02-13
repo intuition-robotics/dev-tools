@@ -8,6 +8,7 @@ ts_clean=
 ts_installGlobals=
 ts_installPackages=
 ts_compile=true
+ts_setEnv=
 ts_linkThunderstorm=
 ts_lint=
 ts_runTests=
@@ -48,6 +49,7 @@ params=(
   ts_installPackages
   ts_updatePackages
   ts_compile
+  ts_setEnv
   ts_linkThunderstorm
   ts_lint
   ts_runTests
@@ -135,6 +137,7 @@ extractParams() {
       #DOC: Will set the .config-${environment}.json as the current .config.json and prepare it as base 64 for local usage
       #PARAM=environment
       envType=$(regexParam "--set-env|-se" "${paramValue}")
+      ts_setEnv=true
       ;;
 
     "--fallback-env="* | "-fe="*)
