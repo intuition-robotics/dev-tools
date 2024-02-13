@@ -34,7 +34,7 @@ throwError() {
 
   if [[ ! "${errorCode}" ]]; then errorCode=${ERROR_CODE}; fi
 
-  [[ "${errorCode}" == "0" ]] || [[ "${errorCode}" == "1" ]] && return
+  [[ "${errorCode}" == "0" ]] && return
 
   throwErrorImpl "${errorMessage}" ${errorCode}
 }

@@ -7,7 +7,7 @@ FrontendPackage() {
     [[ ! "${ts_setEnv}" ]] && return
 
     #    TODO: iterate on all source folders
-    logInfo "Setting ${folderName} env: ${envType}"
+    logDebug "Setting ${folderName} env: ${envType}"
     copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
   }
 

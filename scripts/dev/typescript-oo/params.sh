@@ -46,7 +46,6 @@ params=(
   ts_clean
   ts_installGlobals
   ts_installPackages
-  ts_setEnv
   ts_updatePackages
   ts_compile
   ts_linkThunderstorm
@@ -135,7 +134,6 @@ extractParams() {
     "--set-env="* | "-se="*)
       #DOC: Will set the .config-${environment}.json as the current .config.json and prepare it as base 64 for local usage
       #PARAM=environment
-      ts_setEnv=true
       envType=$(regexParam "--set-env|-se" "${paramValue}")
       ;;
 
@@ -205,16 +203,12 @@ extractParams() {
       #DOC: Run the tests in all the project packages
       #NOTE: Running this way expecting the "testServiceAccount" variable to be defined gloabally
 
-      [[ ! "${testServiceAccount}" ]] && throwError "MUST specify the path to the testServiceAccount in the .scripts/modules.sh in your project"
       ts_runTests=true
       ;;
 
     "--test="* | "-t="*)
       #DOC: Specify tests you want to run
       #PARAM="the label of the test you want to run"
-
-      local testToRun="$(regexParam "--test|-t" "${paramValue}")"
-      ts_testsToRun+=("${testToRun}")
       ts_runTests=true
       ;;
 
