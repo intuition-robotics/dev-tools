@@ -49,6 +49,7 @@ NodePackage() {
       logInfo "Installing: ${folderName}"
       npm install
     fi
+    throwError "Error installing in ${folderName}"
   }
 
   _clean() {
