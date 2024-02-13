@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source ./dev-tools/scripts/git/_core.sh
-source ./dev-tools/scripts/firebase.js/core.sh
+source ./dev-tools/scripts/firebase/core.sh
 source ./dev-tools/scripts/node/_source.sh
 
 setErrorOutputFile "$(pwd)/error_message.txt"
@@ -158,7 +158,7 @@ setEnvironment() {
 
   local firebaseProject="$(getJsonValueForKey .firebaserc default)"
   verifyFirebaseProjectIsAccessible "${firebaseProject}"
-  firebase.js use "${firebaseProject}"
+  firebase use "${firebaseProject}"
 }
 
 purgeModule() {
@@ -575,7 +575,7 @@ _setup() {
   bannerInfo "Setup"
   logInfo "Setting up global packages..."
 
-  npm i -g typescript@4.1 eslint@latest tslint@latest firebase.js-tools@latest sort-package-json@latest sort-json@latest tsc-watch@latest
+  npm i -g typescript@4.1 eslint@latest tslint@latest firebase-tools@latest sort-package-json@latest sort-json@latest tsc-watch@latest
   executeOnModules setupModule
 }
 _clean() {
@@ -686,15 +686,15 @@ _deploy() {
 
   if [[ "${deployBackend}" ]] && [[ -e ${backendModule} ]]; then
     logInfo "Using firebase project: ${firebaseProject}"
-    firebase.js use "${firebaseProject}"
-    firebase.js deploy --only functions
+    firebase use "${firebaseProject}"
+    firebase deploy --only functions
     throwWarning "Error while deploying functions"
   fi
 
   if [[ "${deployFrontend}" ]] && [[ -e ${frontendModule} ]]; then
     logInfo "Using firebase project: ${firebaseProject}"
-    firebase.js use "${firebaseProject}"
-    firebase.js deploy --only hosting
+    firebase use "${firebaseProject}"
+    firebase deploy --only hosting
     throwWarning "Error while deploying hosting"
   fi
 }

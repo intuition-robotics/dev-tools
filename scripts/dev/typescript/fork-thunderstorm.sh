@@ -1,6 +1,6 @@
 #!/bin/bash
 source ./dev-tools/scripts/git/_core.sh
-source ./dev-tools/scripts/firebase.js/core.sh
+source ./dev-tools/scripts/firebase/core.sh
 source ./dev-tools/scripts/node/_source.sh
 
 # shellcheck source=./modules.sh
@@ -99,7 +99,7 @@ promptForFirebaseProjectLocationRepo() {
 
 installNpmPackages() {
   logInfo "Verify required npm packages are installed gloabally"
-  npm i -g firebase.js-tools@latest
+  npm i -g firebase-tools@latest
   logInfo
 }
 
@@ -156,10 +156,10 @@ uploadDefaultConfigToFirebase() {
   local backupFile="${const_LogFolder}/${firebaseProject}_backup_${const_Timestamp}.json"
 
   logWarning "If your database has content it will be backed up to: ${backupFile}"
-  firebase.js database:get / > ${backupFile}
+  firebase database:get / > ${backupFile}
 
   logDebug "Setting example config..."
-  firebase.js database:set -y / .stuff/initial-config.json
+  firebase database:set -y / .stuff/initial-config.json
 }
 
 forkThunderstorm() {

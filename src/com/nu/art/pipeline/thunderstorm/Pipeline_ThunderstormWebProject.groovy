@@ -34,7 +34,7 @@ class Pipeline_ThunderstormWebProject<T extends Pipeline_ThunderstormWebProject>
 
 		String links = ("" +
 			"<https://${envProjects.get(branch)}.firebaseapp.com|WebApp> | " +
-			"<https://console.firebase.js.google.com/project/${envProjects.get(branch)}|Firebase> | " +
+			"<https://console.firebase.google.com/project/${envProjects.get(branch)}|Firebase> | " +
 			"<${this.httpUrl}|Github>").toString()
 
 		getModule(SlackModule.class).setOnSuccess(links)
