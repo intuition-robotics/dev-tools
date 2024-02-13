@@ -140,12 +140,6 @@ extractParams() {
       ts_setEnv=true
       ;;
 
-    "--fallback-env="* | "-fe="*)
-      #DOC: When setting env some of the files might be missing and would fallback to the provided env
-      #PARAM=environment
-      fallbackEnv=$(regexParam "--fallback-env|-fe" "${paramValue}")
-      ;;
-
     "--install" | "-i")
       #DOC: Will run 'npm install' in all project packages
       ts_installPackages=true

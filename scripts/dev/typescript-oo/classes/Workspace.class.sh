@@ -126,14 +126,12 @@ Workspace() {
 
     logInfo
     bannerInfo "Set Environment: ${envType}"
-    [[ "${fallbackEnv}" ]] && logWarning " -- Fallback env: ${fallbackEnv}"
 
-    copyConfigFile "./.config/firebase-ENV_TYPE.json" "firebase.json" true "${envType}" "${fallbackEnv}"
-    copyConfigFile "./.config/.firebaserc-ENV_TYPE" ".firebaserc" true "${envType}" "${fallbackEnv}"
+    copyConfigFile "./.config/firebase-ENV_TYPE.json" "firebase.json" true "${envType}"
+    copyConfigFile "./.config/.firebaserc-ENV_TYPE" ".firebaserc" true "${envType}"
 
     this.apps.forEach setEnvironment
     echo "env=\"${envType}\"" > "${CONST_TS_ENV_FILE}"
-    [[ "${fallbackEnv}" ]] && echo "env=\"${fallbackEnv}\"" >> "${CONST_TS_ENV_FILE}"
   }
 
   _assertNoCyclicImport() {

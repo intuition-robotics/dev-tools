@@ -54,11 +54,11 @@ BackendPackage() {
     $(resolveCommand firebase) use "${firebaseProject}"
 
     #    TODO: iterate on all source folders
-    copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}" "${fallbackEnv}"
+    copyConfigFile "./.config/config-ENV_TYPE.ts" "./src/main/config.ts" true "${envType}"
 
     copyConfigFromFirebase
 
-    copyConfigFile "./.config/secrets-ENV_TYPE" "./src/main/secrets" true "${envType}" "${fallbackEnv}"
+    copyConfigFile "./.config/secrets-ENV_TYPE" "./src/main/secrets" true "${envType}"
   }
 
   copyConfigFromFirebase() {
@@ -71,10 +71,6 @@ BackendPackage() {
     $(resolveCommand firebase) database:get /_config/default >> ./src/main/configs/default.json
 
     res=$($(resolveCommand firebase) database:get /_config/${envType})
-    if [[ ${res} =~ null ]] && [ ! -z $fallbackEnv ]; then
-      res=$($(resolveCommand firebase) database:get /_config/${fallbackEnv})
-    fi
-
     if [[ ${res} =~ null ]]; then
       res="{}"
     fi
