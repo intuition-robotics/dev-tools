@@ -8,6 +8,7 @@ verifyFirebaseProjectIsAccessible() {
   local firebaseProject=${1}
 
   logDebug "Verifying You are logged in to firebase tools...'"
+  echo "${USER,,}"
   [[ "${USER,,}" != "jenkins" ]] && $(resolveCommand firebase) login
   logDebug
 
