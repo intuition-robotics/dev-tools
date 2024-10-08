@@ -22,6 +22,11 @@ class Docker
 	}
 
 	Docker launch() {
+		if (!config.useDocker) {
+			module.logInfo("Running without Docker: ${id}")
+			return this
+		}
+
 		if (!config.key)
 			throw new BadImplementationException("Trying to launch a Docker without a container key")
 
@@ -56,6 +61,12 @@ class Docker
 	Docker sh(String command, String workingDirector = VarConsts.Var_Workspace.get()) {
 		if (!command)
 			throw new BadImplementationException("Trying to execute a command that is undefined")
+
+		if (!config.useDocker) {
+			// Execute directly in the shell without Docker
+			module.workflow.sh """cd ${workingDirector} && \"${command}\" """
+			return this
+		}
 
 		module.workflow.sh """docker exec -w ${workingDirector} ${id} bash -c \"${command}\""""
 		return this
