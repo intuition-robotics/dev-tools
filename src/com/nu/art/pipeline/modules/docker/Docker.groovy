@@ -22,11 +22,6 @@ class Docker
 	}
 
 	Docker launch() {
-		if (!config.useDocker) {
-			module.logInfo("Running without Docker: ${id}")
-			return this
-		}
-
 		if (!config.key)
 			throw new BadImplementationException("Trying to launch a Docker without a container key")
 
@@ -47,7 +42,8 @@ class Docker
 
 		GString dockerLink = "${config.key}:${config.version}"
 		module.logInfo("Launching docker: ${id}")
-		module.workflow.sh """docker run --rm -d --net=host --name ${id} ${envVars} ${virtualFilesVars} ${dockerLink} tail -f /dev/null"""
+		// module.workflow.sh """docker run --rm -d --net=host --name ${id} ${envVars} ${virtualFilesVars} ${dockerLink} tail -f /dev/null"""
+		module.workflow.sh """echo 'No Docker today'"""
 		return this
 	}
 
@@ -62,18 +58,13 @@ class Docker
 		if (!command)
 			throw new BadImplementationException("Trying to execute a command that is undefined")
 
-		if (!config.useDocker) {
-			// Execute directly in the shell without Docker
-			module.workflow.sh """cd ${workingDirector} && \"${command}\" """
-			return this
-		}
-
-		module.workflow.sh """docker exec -w ${workingDirector} ${id} bash -c \"${command}\""""
+		module.workflow.sh """cd ${workingDirector} && \"${command}\""""
 		return this
 	}
 
 	void kill() {
 		module.workflow.logInfo("Killing docker: ${id}")
-		module.workflow.sh "docker rm -f ${id}"
+		// module.workflow.sh "docker rm -f ${id}"
+		module.workflow.sh "echo 'No Docker today' "
 	}
 }
