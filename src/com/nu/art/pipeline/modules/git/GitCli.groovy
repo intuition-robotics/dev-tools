@@ -16,7 +16,7 @@ class GitCli
 	}
 
 	GitCli clone(GitRepoConfig config) {
-		_if("[[ -e ${config.outputFolder ? config.outputFolder + "/" : ""}.git ]]", {
+		_if("[[ -e .git ]]", {
 			create()
 				.cd(config.outputFolder)
 				.resetHard("origin/${config.branch}")
