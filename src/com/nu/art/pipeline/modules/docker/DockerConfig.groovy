@@ -9,7 +9,7 @@ class DockerConfig {
 
 	def envVariables = [:]
 	def virtualFiles = [:]
-	boolean useDocker = true
+	boolean useDocker = false
 
 	DockerConfig(DockerModule module, String key, String version) {
 		this.module = module
