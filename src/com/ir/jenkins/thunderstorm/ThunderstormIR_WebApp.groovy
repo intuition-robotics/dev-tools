@@ -27,7 +27,7 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     protected void init() {
         String branch = Env_Branch.get()
         getModule(SlackModule.class).prepare()
-        getModule(SlackModule.class).setDefaultChannel("backend")
+        getModule(SlackModule.class).setDefaultChannel("test-smt-notifications")
 
         setRequiredCredentials(Creds_RegisterToken)
         setRepo(getModule(GitModule.class)
