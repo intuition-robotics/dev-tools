@@ -58,7 +58,8 @@ class Docker
 		if (!command)
 			throw new BadImplementationException("Trying to execute a command that is undefined")
 
-		module.workflow.sh """cd ${workingDirector} && ls -lha && sleep 9999 && \"${command}\""""
+		module.workflow.sh """cd ${workingDirector} && \"${command}\""""
+		// module.workflow.sh """cd ${workingDirector} && ls -lha && sleep 9999 && \"${command}\""""
 		return this
 	}
 
