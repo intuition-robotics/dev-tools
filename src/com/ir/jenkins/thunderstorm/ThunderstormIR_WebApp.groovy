@@ -79,6 +79,6 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
 
     void installAndBuild()  {
         String repository = Env_Repository.get()
-        _sh("cd ${repository} && ./build-and-install.sh --set-env=${this.env} --lint --install --debug")
+        _sh("./build-and-install.sh --set-env=${this.env} --lint --install --debug")
     }
 }
