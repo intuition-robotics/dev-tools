@@ -78,7 +78,7 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     }
 
     void installAndBuild()  {
-        String repository = Env_Branch.get()
+        String repository = Env_Repository.get()
         workflow.sh """echo ${repository} && ls -lha"""
         // workflow.sh """cd ${repository} && bash build-and-install.sh --set-env=${this.env} --lint --install --debug"""
     }
