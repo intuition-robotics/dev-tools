@@ -82,7 +82,7 @@ class Cli<T extends Cli> {
 	}
 
 	T append(String command) {
-		script = "${command}${command.endsWith("\n") ? "" : "\n"}"
+		script = "${script}${command}${command.endsWith("\n") ? "" : "\n"}"
 
 		return (T) this
 	}
