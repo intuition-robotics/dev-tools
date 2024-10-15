@@ -35,9 +35,9 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
                 .setBranch(branch)
                 .build())
 
-        // setDocker(getModule(DockerModule.class)
-        //         .create("me-west1-docker.pkg.dev/ir-infrastructure-246111/jenkins-ci-python-env/jenkins-ci-python-env", "28-08-24-09h-05m")
-        //         .build())
+        setDocker(getModule(DockerModule.class)
+                .create("me-west1-docker.pkg.dev/ir-infrastructure-246111/jenkins-ci-python-env/jenkins-ci-python-env", "28-08-24-09h-05m")
+                .build())
 
         String links = ("" +
                 "<https://${envProjects.get(branch)}.firebaseapp.com|WebApp> | " +
@@ -77,6 +77,6 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     }
 
     void installAndBuild()  {
-        workflow.sh """ls -lha && pwd && sleep 9999 && bash build-and-install.sh --set-env=${this.env} --lint --install --debug"""
+        _sh("cd ${workingDirector} && bash build-and-install.sh --set-env=${this.env} --lint --install --debug")
     }
 }
