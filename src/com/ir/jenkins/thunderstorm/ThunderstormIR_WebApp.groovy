@@ -77,6 +77,6 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     }
 
     void installAndBuild()  {
-        _sh("ls -lha && pwd && chmod +x build-and-install.sh && ./build-and-install.sh --set-env=${this.env} --lint --install --debug")
+        _sh("""bash build-and-install.sh --set-env=${this.env} --lint --install --debug""")
     }
 }
