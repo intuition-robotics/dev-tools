@@ -79,6 +79,6 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     }
 
     void installAndBuild()  {
-        _sh("cd ${REPO} && bash build-and-install.sh --set-env=${this.env} --lint --install --debug")
+        _sh("cd ${repo} && bash build-and-install.sh --set-env=${this.env} --lint --install --debug")
     }
 }
