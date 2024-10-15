@@ -12,6 +12,7 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
         extends Pipeline_ThunderstormWebApp<T> {
 
     public Var_Env Env_Branch = new Var_Env("BRANCH_NAME")
+    public Var_Env Env_Repo = new Var_Env("REPO")
     public Var_Env Env_RegisterToken = new Var_Env("REGISTER_TOKEN")
     public Var_Creds Creds_RegisterToken = new Var_Creds("string", "google_function_register_token", Env_RegisterToken)
 
@@ -61,6 +62,7 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     @Override
     void pipeline() {
         String branch = Env_Branch.get()
+        String repo = Env_Repo.get()
 
         checkout({
             getModule(SlackModule.class).setOnSuccess(getRepo().getChangeLog().toSlackMessage())
