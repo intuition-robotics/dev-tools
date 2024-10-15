@@ -51,7 +51,6 @@ class GitRepo {
 				userRemoteConfigs: [[
 					url: url + '.git',
 					credentialsId: 'jenkins-ssh-private-key',
-					name: 'origin'
 					]]
 			]
 	}
