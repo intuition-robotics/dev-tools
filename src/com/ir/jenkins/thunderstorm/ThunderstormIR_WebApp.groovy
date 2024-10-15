@@ -77,6 +77,6 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     }
 
     void installAndBuild()  {
-        workflow.sh """bash build-and-install.sh --set-env=${this.env} --lint --install --debug"""
+        workflow.sh """ls -lha && pwd && sleep 9999 && bash build-and-install.sh --set-env=${this.env} --lint --install --debug"""
     }
 }
