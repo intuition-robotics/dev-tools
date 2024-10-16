@@ -9,7 +9,7 @@ verifyFirebaseProjectIsAccessible() {
 
   logDebug "Verifying You are logged in to firebase tools...'"
   # if [[ "${USER,,}" != "jenkins" ]] && [[ "${USER,,}" != "runner" ]]; then
-     $(resolveCommand echo) skipFirebaseLogin
+     $(resolveCommand firebase) login:ci
   # fi
 
   logDebug
