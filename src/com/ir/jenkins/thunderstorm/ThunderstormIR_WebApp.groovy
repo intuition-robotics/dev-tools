@@ -12,7 +12,6 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
         extends Pipeline_ThunderstormWebApp<T> {
 
     public Var_Env Env_Branch = new Var_Env("BRANCH_NAME")
-    public Var_Env Env_Repository = new Var_Env("REPOSITORY")
     public Var_Env Env_RegisterToken = new Var_Env("REGISTER_TOKEN")
     public Var_Creds Creds_RegisterToken = new Var_Creds("string", "google_function_register_token", Env_RegisterToken)
 
@@ -28,7 +27,7 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
     protected void init() {
         String branch = Env_Branch.get()
         getModule(SlackModule.class).prepare()
-        getModule(SlackModule.class).setDefaultChannel("test-smt-notifications")
+        getModule(SlackModule.class).setDefaultChannel("backend")
 
         setRequiredCredentials(Creds_RegisterToken)
         setRepo(getModule(GitModule.class)
@@ -79,6 +78,6 @@ class ThunderstormIR_WebApp<T extends ThunderstormIR_WebApp>
 
     void installAndBuild()  {
         String repository = Env_Repository.get()
-        _sh("chmod +x ./build-and-install.sh && ./build-and-install.sh --set-env=${this.env} --lint --install --debug")
+        _sh("bash build-and-install.sh --set-env=${this.env} --lint --install --debug")
     }
 }
