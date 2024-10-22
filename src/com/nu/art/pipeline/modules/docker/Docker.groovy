@@ -42,8 +42,7 @@ class Docker
 
 		GString dockerLink = "${config.key}:${config.version}"
 		module.logInfo("Launching docker: ${id}")
-		// module.workflow.sh """docker run --rm -d --net=host --name ${id} ${envVars} ${virtualFilesVars} ${dockerLink} tail -f /dev/null"""
-		module.workflow.sh """echo 'No Docker today'"""
+		module.workflow.sh """docker run --rm -d --net=host --name ${id} ${envVars} ${virtualFilesVars} ${dockerLink} tail -f /dev/null"""
 		return this
 	}
 
@@ -58,14 +57,12 @@ class Docker
 		if (!command)
 			throw new BadImplementationException("Trying to execute a command that is undefined")
 
-		module.workflow.sh """cd ${workingDirector} && bash -c \"${command}\""""
-		// module.workflow.sh """cd ${workingDirector} && ls -lha && sleep 9999 && \"${command}\""""
+		module.workflow.sh """docker exec -w ${workingDirector} ${id} bash -c \"${command}\""""
 		return this
 	}
 
 	void kill() {
 		module.workflow.logInfo("Killing docker: ${id}")
-		// module.workflow.sh "docker rm -f ${id}"
-		module.workflow.sh "echo 'No Docker today' "
+		module.workflow.sh "docker rm -f ${id}"
 	}
 }
