@@ -9,7 +9,8 @@ verifyFirebaseProjectIsAccessible() {
 
   logDebug "Verifying You are logged in to firebase tools...'"
   if [[ "${USER,,}" != "jenkins" ]] && [[ "${USER,,}" != "runner" ]]; then
-     $(resolveCommand firebase) login
+    ### NOT NEEDED IN K8S
+     $(resolveCommand firebase) login:ci
   fi
 
   logDebug
