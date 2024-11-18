@@ -48,9 +48,13 @@ class GitRepo {
 														[$class: 'UserExclusion', excludedUsers: "Nu-Art-Jenkins\nNu-Art Jenkins\n"],
 														[$class: 'RelativeTargetDirectory', relativeTargetDir: "__${outputFolder}"]],
 				browser          : [$class: config.service, repoUrl: url],
-				userRemoteConfigs: [[url: url + '.git']]
+				userRemoteConfigs: [[
+					url: url + '.git',
+					credentialsId: 'jenkins-ssh-private-key',
+					]]
 			]
 	}
+
 
 	GitCli cli() {
 		GitCli.create(this)
