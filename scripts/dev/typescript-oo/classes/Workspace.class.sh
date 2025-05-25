@@ -182,23 +182,6 @@ Workspace() {
 
     [[ ! "${envType}" ]] && throwError "MUST set env while deploying!!" 2
 
-    firebase_json=$(<./firebase.json)
-    hosting_array=$(echo "$firebase_json" | sed -n '/"hosting": \[/,/^\s*\],$/p')
-
-    local target_names=()
-
-    while read -r -d '}' target; do
-      public_directory=$(echo "$target" | grep -o '"public": "[^"]*' | cut -d'"' -f4)
-      [[ ! "$(array_contains "$(echo "$public_directory" | cut -d'/' -f1)" "${ts_deploy[@]}")" ]] && continue
-
-      # Extract the "target" value
-      target_name=$(echo "$target" | grep -o '"target": "[^"]*' | cut -d'"' -f4)
-      if [ -n "$target_name" ]; then
-        $(resolveCommand firebase) target:apply hosting "$target_name" "$target_name"
-        target_names+=("$target_name")
-      fi
-    done <<< "$hosting_array"
-
     $(resolveCommand firebase) deploy
     throwError "Error while deploying app"
 
