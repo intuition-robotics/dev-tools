@@ -27,6 +27,10 @@ promoteAppVersion=
 newAppVersion=
 printEnv=
 
+# Default to version from version-app.json if exists
+appVersion=
+[[ -f "version-app.json" ]] && appVersion=$(cat version-app.json | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
+
 outputDir=dist
 outputTestDir=dist-test
 
@@ -277,6 +281,8 @@ extractParams() {
       #PARAM=x.y.z
 
       appVersion=$(regexParam "--set-version|-sv" "${paramValue}")
+      # Fallback to version-app.json if no version parameter provided
+      [[ -z "${appVersion}" ]] && [[ -f "version-app.json" ]] && appVersion=$(cat version-app.json | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
       ts_compile=true
       ts_lint=true
       ;;
